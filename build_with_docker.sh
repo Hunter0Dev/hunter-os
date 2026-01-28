@@ -1,6 +1,8 @@
 #!/bin/bash
 # Build script for Non-Arch Systems (Debian, Ubuntu, Fedora)
 
+set -e # Exit immediately if a command exits with a non-zero status.
+
 echo ">>> Building HUNTER OS Container..."
 docker build -t hunter-builder .
 
