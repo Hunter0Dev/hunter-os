@@ -56,8 +56,7 @@ grim
 slurp
 
 # -- Login Manager & Installer --
-sddm
-calamares
+archinstall
 
 
 # -- Applications (Lightweight) --

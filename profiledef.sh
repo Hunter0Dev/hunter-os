@@ -16,7 +16,7 @@ pacman_conf="pacman.conf"
 airootfs_image_type="squashfs"
 airootfs_image_tool_options=('-comp' 'zstd' '-Xcompression-level' '15' '-b' '1M')
 file_permissions=(
-  ["/etc/shadow"]="0:0:400"
+
   ["/root"]="0:0:750"
   ["/usr/local/bin/hunter"]="0:0:755"
   ["/usr/local/bin/hunter-get"]="0:0:755"
