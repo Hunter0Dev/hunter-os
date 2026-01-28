@@ -58,7 +58,6 @@ slurp
 # -- Login Manager & Installer --
 sddm
 calamares
-calamares-tool-deploy-efi
 
 
 # -- Applications (Lightweight) --
@@ -69,12 +68,11 @@ thunar-volman
 mpv
 firefox
 htop
-neofetch
+fastfetch
 nwg-look
 
 # -- Development (Rust/Build) --
 rust
-cargo
 gcc
 make
 python
