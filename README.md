@@ -16,20 +16,16 @@ sudo pacman -S archiso
 ```
 
 ### Option 2: On Debian/Ubuntu/Windows (Docker)
-If you are not running Arch Linux (e.g. you are on Debian 13), you must use **Docker** because `archiso` requires `pacman` to fetch packages.
-
-1.  **Install Docker** on your Debian machine:
+1.  **Run the Auto-Setup Script**:
+    This will install Docker and fix all permissions for you.
     ```bash
-    sudo apt update
-    sudo apt install docker.io
-    sudo usermod -aG docker $USER
-    # Log out and log back in
+    chmod +x setup.sh
+    ./setup.sh
     ```
 
 2.  **Run the Build Script**:
     ```bash
-    chmod +x build_with_docker.sh
-    ./build_with_docker.sh
+    sudo ./build_with_docker.sh
     ```
 
 ## Build Instructions
