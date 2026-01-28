@@ -3,6 +3,11 @@ linux-zen
 linux-firmware
 intel-ucode
 amd-ucode
+grub
+efibootmgr
+os-prober
+dosfstools
+gptfdisk
 sudo
 vim
 neovim

@@ -1,0 +1,28 @@
+---
+componentName:  hunter
+welcomeStyleCalamares:   true
+welcomeExpandingLogo:   true
+windowExpanding:    normal
+windowSize: 800px,520px
+windowPlacement: center
+
+strings:
+    productName:         HUNTER OS
+    shortProductName:    HUNTER
+    version:             1.0
+    shortVersion:        1.0
+    versionedName:       HUNTER OS 1.0 (Aegis)
+    shortVersionedName:  HUNTER 1.0
+    bootloaderEntryName: HUNTER
+
+images:
+    productLogo:         "/usr/share/pixmaps/hunter-logo.png"
+    productIcon:         "/usr/share/pixmaps/hunter-logo.png"
+    productWelcome:      "/usr/share/backgrounds/default.png"
+
+slideshow:               []
+
+style:
+   sidebarBackground:    "#1e1e2e"
+   sidebarText:          "#ffffff"
+   sidebarTextSelect:    "#33ccff"
