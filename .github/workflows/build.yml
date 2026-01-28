@@ -1,0 +1,40 @@
+name: Build HUNTER OS ISO
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+      # Privileged mode is REQUIRED for mkarchiso to mount loop devices
+      options: --privileged
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Install Build Dependencies
+      run: |
+        # Update mirrors and install archiso + bootloader tools
+        pacman -Sy --noconfirm archiso grub syslinux mtools dosfstools efibootmgr
+
+    - name: Build ISO
+      run: |
+        # Run the build command
+        # -w /tmp/work: Temporary work directory
+        # -o out/: Output directory for the final ISO
+        # .: Current directory (project root)
+        mkdir -p out
+        mkarchiso -v -w /tmp/work -o out/ .
+
+    - name: Upload ISO Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: hunter-os-iso
+        path: out/*.iso
+        retention-days: 5
+        compression-level: 0 # Faster upload for large files
