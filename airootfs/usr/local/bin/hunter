@@ -1,0 +1,72 @@
+#!/bin/bash
+# 'hunter' - The Official HUNTER OS Package Manager Wrapper
+# Simulates a "sudo apt" feel but uses the power of Arch's pacman/paru.
+
+COMMAND=$1
+shift # Shift arguments so $@ becomes the rest of the args
+
+print_help() {
+    echo "Usage: hunter [command] [package_name]"
+    echo ""
+    echo "Commands:"
+    echo "  install [app]    Install an application (e.g., 'hunter install vlc')"
+    echo "  remove  [app]    Remove an application"
+    echo "  update           Update the entire system"
+    echo "  search  [query]  Search for an application"
+    echo "  clean            Clean system cache (free up space)"
+    echo ""
+    echo "Quick Dev Environments:"
+    echo "  install dev-c    Install C/C++ Compiler Suite"
+    echo "  install dev-node Install NodeJS & Web Tools"
+    echo "  install dev-rust Install Rust Toolchain"
+}
+
+if [ -z "$COMMAND" ]; then
+    print_help
+    exit 1
+fi
+
+case "$COMMAND" in
+    install)
+        # Check for special 'dev' groups first
+        case "$1" in
+            dev-c)
+                echo ">>> [hunter] Installing C/C++ Development Environment..."
+                sudo pacman -S --noconfirm --needed base-devel cmake gcc gdb
+                ;;
+            dev-node)
+                echo ">>> [hunter] Installing Node.js Environment..."
+                sudo pacman -S --noconfirm --needed nodejs npm
+                ;;
+            dev-rust)
+                echo ">>> [hunter] Installing Rust Environment..."
+                sudo pacman -S --noconfirm --needed rust cargo
+                ;;
+            *)
+                echo ">>> [hunter] Installing: $@"
+                sudo pacman -S --needed "$@"
+                ;;
+        esac
+        ;;
+    remove|delete|uninstall)
+        echo ">>> [hunter] Removing: $@"
+        sudo pacman -Rns "$@"
+        ;;
+    update|upgrade)
+        echo ">>> [hunter] Updating System..."
+        sudo pacman -Syu
+        ;;
+    search|find)
+        echo ">>> [hunter] Searching for: $@"
+        pacman -Ss "$@"
+        ;;
+    clean)
+        echo ">>> [hunter] Cleaning Cache..."
+        sudo pacman -Sc
+        ;;
+    *)
+        echo "Error: Unknown command '$COMMAND'"
+        print_help
+        exit 1
+        ;;
+esac

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Hunter Theme
+Comment=Official HUNTER OS Login Theme
+Type=X-SDDM-Theme
+Version=1.0
+MainScript=Main.qml

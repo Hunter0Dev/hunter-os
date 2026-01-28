@@ -1,0 +1,10 @@
+NAME="HUNTER OS"
+PRETTY_NAME="HUNTER OS v1.0 (Aegis)"
+ID=hunter
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="0;36"
+HOME_URL="https://hunter-os.org/"
+SUPPORT_URL="https://hunter-os.org/support"
+BUG_REPORT_URL="https://hunter-os.org/bugs"
+LOGO=hunter-logo

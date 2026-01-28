@@ -1,0 +1,82 @@
+base
+linux-zen
+linux-firmware
+intel-ucode
+amd-ucode
+sudo
+vim
+neovim
+git
+btrfs-progs
+man-db
+man-pages
+texinfo
+
+# -- System & Network --
+networkmanager
+iwd
+bluez
+bluez-utils
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+reflector
+openssh
+
+# -- Security & Sandboxing --
+firejail
+bubblewrap
+apparmor
+ufw
+
+# -- Graphical Environment (Wayland) --
+hyprland
+xdg-desktop-portal-hyprland
+labwc
+waybar
+swaybg
+swaylock
+swayidle
+wofi
+mako
+polkit-gnome
+qt5-wayland
+qt6-wayland
+brightnessctl
+wl-clipboard
+grim
+slurp
+
+# -- Login Manager & Installer --
+sddm
+calamares
+calamares-tool-deploy-efi
+
+
+# -- Applications (Lightweight) --
+kitty
+thunar
+thunar-archive-plugin
+thunar-volman
+mpv
+firefox
+htop
+neofetch
+nwg-look
+
+# -- Development (Rust/Build) --
+rust
+cargo
+gcc
+make
+python
+lua
+
+# -- Fonts & Themes --
+ttf-jetbrains-mono
+ttf-font-awesome
+noto-fonts
+noto-fonts-emoji
+papirus-icon-theme

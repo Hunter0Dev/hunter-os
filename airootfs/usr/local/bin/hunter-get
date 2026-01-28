@@ -1,0 +1,73 @@
+#!/bin/bash
+# hunter-get: The HUNTER OS Package Manager Helper
+# Makes installing complex tools easy for the user.
+
+ACTION=$1
+TARGET=$2
+
+print_help() {
+    echo "HUNTER OS Package Helper"
+    echo "Usage: hunter-get [install|fix] [package]"
+    echo ""
+    echo "Commands:"
+    echo "  install dev-c       Install C/C++ Compilers (GCC, Make, CMake)"
+    echo "  install dev-web     Install Web Tools (NodeJS, NPM, Yarn)"
+    echo "  install dev-rust    Install Rust Toolchain"
+    echo "  install gaming      Install Steam & Drivers"
+    echo "  fix wifi            Reset Wi-Fi Adapter"
+    echo "  fix bluetooth       Reset Bluetooth Service"
+}
+
+install_group() {
+    echo ">>> HUNTER-GET: Installing $1..."
+    sudo pacman -S --noconfirm --needed $2
+}
+
+case "$ACTION" in
+    install)
+        case "$TARGET" in
+            dev-c|cpp|c++)
+                install_group "C/C++ Dev Tools" "base-devel cmake gdb valgrind clang"
+                ;;
+            dev-web|node|nodejs)
+                install_group "Web Dev Tools" "nodejs npm yarn typescript"
+                ;;
+            dev-python)
+                install_group "Python Dev Tools" "python-pip python-virtualenv tk"
+                ;;
+            dev-rust)
+                install_group "Rust Dev Tools" "rust cabal-install"
+                ;;
+            gaming)
+                echo "Enabling Multilib..."
+                # This would require uncommenting multilib in pacman.conf, advanced step.
+                install_group "Gaming Essentials" "steam lutris gamemode"
+                ;;
+            *)
+                echo "Invoking Pacman for '$TARGET'..."
+                sudo pacman -S --needed $TARGET
+                ;;
+        esac
+        ;;
+    fix)
+        case "$TARGET" in
+            wifi|internet)
+                echo ">>> Resetting Network Manager..."
+                sudo systemctl restart NetworkManager
+                echo "Done."
+                ;;
+            bluetooth|bt)
+                echo ">>> Resetting Bluetooth..."
+                sudo rfkill unblock bluetooth
+                sudo systemctl restart bluetooth
+                echo "Done."
+                ;;
+            *)
+                print_help
+                ;;
+        esac
+        ;;
+    *)
+        print_help
+        ;;
+esac
