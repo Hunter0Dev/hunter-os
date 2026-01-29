@@ -15,7 +15,7 @@ echo "LANG=en_US.UTF-8" > /etc/locale.conf
 # Enable Critical Services
 systemctl enable NetworkManager
 systemctl enable bluetooth
-systemctl enable sddm
+
 
 # Setup User (if not using autologin, but live media usually autologins)
 # We ensure the 'hunter' user exists if we were creating a persistent install script
