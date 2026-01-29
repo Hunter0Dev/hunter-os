@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Hunter OS Welcome
+Comment=Welcome screen for Hunter OS
+Exec=/usr/local/bin/hunter-welcome
+Icon=dialog-information
+Terminal=false
+Categories=System;
+X-GNOME-Autostart-enabled=true

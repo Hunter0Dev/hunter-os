@@ -90,3 +90,57 @@ gzip
 bzip2
 xz
 
+# -- Display Server & Graphics --
+xorg
+xorg-server
+xorg-xinit
+xf86-video-intel
+xf86-video-amd
+xf86-video-nouveau
+xf86-video-vesa
+mesa
+
+# -- Desktop Environment (XFCE) --
+xfce4
+xfce4-goodies
+xfce4-terminal
+xfce4-screenshooter
+xfce4-taskmanager
+xfce4-notifyd
+xfce4-power-manager
+thunar
+thunar-volman
+thunar-archive-plugin
+xarchiver
+mousepad
+ristretto
+
+# -- Display Manager --
+lightdm
+lightdm-gtk-greeter
+lightdm-gtk-greeter-settings
+
+# -- GUI Applications --
+firefox
+gvfs
+gvfs-mtp
+gvfs-gphoto2
+udisks2
+udiskie
+
+# -- Network Manager GUI --
+network-manager-applet
+nm-connection-editor
+
+# -- Fonts --
+ttf-dejavu
+ttf-liberation
+noto-fonts
+noto-fonts-emoji
+ttf-font-awesome
+
+# -- Audio GUI --
+pavucontrol
+
+# -- System Utilities GUI --
+zenity

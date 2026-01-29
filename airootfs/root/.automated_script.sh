@@ -190,6 +190,33 @@ if command -v pacman &> /dev/null; then
 fi
 
 # ============================================
+# Display Manager Configuration
+# ============================================
+echo ">>> Configuring display manager..."
+if command -v lightdm &> /dev/null; then
+    systemctl enable lightdm
+    
+    # Configure auto-login for live environment
+    mkdir -p /etc/lightdm
+    cat > /etc/lightdm/lightdm.conf << 'EOF'
+[Seat:*]
+autologin-user=hunter
+autologin-session=xfce
+user-session=xfce
+greeter-session=lightdm-gtk-greeter
+EOF
+
+    # Configure LightDM greeter theme
+    cat > /etc/lightdm/lightdm-gtk-greeter.conf << 'EOF'
+[greeter]
+theme-name=Adwaita-dark
+icon-theme-name=Adwaita
+font-name=Sans 10
+background=#1a1a1a
+EOF
+fi
+
+# ============================================
 # Cleanup
 # ============================================
 echo ">>> Cleaning up..."

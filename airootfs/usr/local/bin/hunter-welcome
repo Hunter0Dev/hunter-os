@@ -1,0 +1,47 @@
+#!/bin/bash
+# Hunter OS Welcome Screen
+
+# Check if already shown
+if [ -f ~/.config/hunter-os/welcome-shown ]; then
+    exit 0
+fi
+
+zenity --info \
+  --title="Welcome to Hunter OS" \
+  --width=600 \
+  --height=400 \
+  --text="<big><b>Hunter OS - Security-Focused Linux Distribution</b></big>
+
+<b>🔒 Security Status:</b>
+• Firewall: Active (UFW)
+• Intrusion Prevention: Active (Fail2Ban)
+• AppArmor: Enabled
+• SSH: Hardened Configuration
+
+<b>📦 Package Management:</b>
+• <tt>hunter install &lt;package&gt;</tt> - Install software
+• <tt>hunter remove &lt;package&gt;</tt> - Remove software
+• <tt>hunter update</tt> - Update system
+• <tt>hunter search &lt;term&gt;</tt> - Search packages
+
+<b>🛡️ Security Commands:</b>
+• <tt>hunter audit</tt> - Run security audit
+• <tt>hunter status</tt> - Check security status
+• <tt>hunter firewall</tt> - Manage firewall
+
+<b>👤 Default Credentials:</b>
+Username: <tt>hunter</tt>
+Password: <tt>hunter</tt>
+
+<b>📚 Documentation:</b>
+See README.md and SECURITY.md in /root for details.
+
+<b>💡 Quick Start:</b>
+• Firefox is installed and ready to use
+• File Manager: Thunar
+• Terminal: XFCE Terminal
+• All GUI elements are fully functional"
+
+# Don't show again
+mkdir -p ~/.config/hunter-os
+touch ~/.config/hunter-os/welcome-shown
