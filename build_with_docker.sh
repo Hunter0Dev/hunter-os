@@ -42,6 +42,11 @@ docker run --privileged --rm -v "$(pwd):/hunter-os" hunter-builder /bin/bash -c 
     ln -sf /usr/lib/systemd/system/apparmor.service "$WANTS_DIR/apparmor.service"
     ln -sf /usr/lib/systemd/system/sshd.service "$WANTS_DIR/sshd.service"
 
+    # Virtualization Services (Auto-detects and runs if in VM)
+    ln -sf /usr/lib/systemd/system/vboxservice.service "$WANTS_DIR/vboxservice.service"
+    ln -sf /usr/lib/systemd/system/vmtoolsd.service "$WANTS_DIR/vmtoolsd.service"
+    ln -sf /usr/lib/systemd/system/qemu-guest-agent.service "$WANTS_DIR/qemu-guest-agent.service"
+
     # Setup Service
     ln -sf "/etc/systemd/system/setup-hunter.service" "$WANTS_DIR/setup-hunter.service"
 

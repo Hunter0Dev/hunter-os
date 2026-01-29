@@ -90,20 +90,53 @@ gzip
 bzip2
 xz
 
-# -- Display Server & Graphics --
+# -- Display Server & Xorg Utils --
 xorg
 xorg-server
 xorg-xinit
+xorg-xinput
+xorg-xrandr
+xorg-xrdb
+xterm
+xorg-twm
+xorg-xclock
+
+# -- GPU Drivers (The "Everything" List) --
+# Intel
 xf86-video-intel
+vulkan-intel
+intel-media-driver
+libva-intel-driver
+
+# AMD / ATI
 xf86-video-amdgpu
 xf86-video-ati
-xf86-video-nouveau
-xf86-video-vesa
-mesa
+vulkan-radeon
+libva-mesa-driver
 
-# -- Desktop Environment (XFCE) --
+# Nvidia (Open Source & Proprietary utils)
+xf86-video-nouveau
+# nvidia-open-dkms # Note: Proprietary drivers can be tricky in live ISOs implies kernel headers match exactly. Using nouveau/open is safer for generic ISO.
+nvidia-utils
+
+# VM / Virtualization Drivers (CRITICAL for VirtualBox/VMware/QEMU)
+xf86-video-vmware
+xf86-video-qxl
+xf86-video-vboxvideo
+virtualbox-guest-utils
+open-vm-tools
+qemu-guest-agent
+
+# Generic / Fallback
+xf86-video-vesa
+xf86-video-fbdev
+mesa
+mesa-utils
+
+# -- Desktop Environment (XFCE4 Full) --
 xfce4
 xfce4-goodies
+
 xfce4-terminal
 xfce4-screenshooter
 xfce4-taskmanager
