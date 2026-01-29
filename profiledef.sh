@@ -21,7 +21,6 @@ file_permissions=(
   ["/root/.automated_script.sh"]="0:0:755"
   ["/usr/local/bin/hunter"]="0:0:755"
   ["/usr/local/bin/hunter-get"]="0:0:755"
-  ["/usr/local/bin/hunter-ufw-setup.sh"]="0:0:755"
   ["/usr/local/bin/hunter-welcome"]="0:0:755"
   ["/etc/skel/.xinitrc"]="0:0:755"
   ["/etc/sysctl.d/99-hunter-security.conf"]="0:0:644"
