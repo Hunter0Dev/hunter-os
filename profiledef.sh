@@ -2,7 +2,7 @@
 # ISO Name Configuration for HUNTER OS
 
 iso_name="hunter-os"
-iso_label="HUNTER_$(date +%Y%m)"
+iso_label="HUNTER_OS"
 iso_publisher="Hunter Systems <https://hunter-os.org>"
 iso_application="Hunter OS Live/Rescue CD"
 iso_version="$(date +%Y.%m.%d)"

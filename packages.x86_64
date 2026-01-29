@@ -71,10 +71,7 @@ htop
 fastfetch
 nwg-look
 
-# -- Development (Rust/Build) --
-rust
-gcc
-make
+# -- Development (Runtime) --
 python
 lua
 
