@@ -23,6 +23,29 @@ docker run --privileged --rm -v "$(pwd):/hunter-os" hunter-builder /bin/bash -c 
         echo '>>> Copying default Efiboot config...'
         cp -r /usr/share/archiso/configs/releng/efiboot /hunter-os/
     fi
+
+    echo '>>> Enabling System Services...'
+    # Create systemd symlinks
+    SYSTEMD_DIR="/hunter-os/airootfs/etc/systemd/system"
+    WANTS_DIR="$SYSTEMD_DIR/multi-user.target.wants"
+    mkdir -p "$WANTS_DIR"
+
+    # Display Manager (LightDM)
+    ln -sf /usr/lib/systemd/system/lightdm.service "$SYSTEMD_DIR/display-manager.service"
+
+    # Network Manager
+    ln -sf /usr/lib/systemd/system/NetworkManager.service "$WANTS_DIR/NetworkManager.service"
+    
+    # Security Services
+    ln -sf /usr/lib/systemd/system/ufw.service "$WANTS_DIR/ufw.service"
+    ln -sf /usr/lib/systemd/system/fail2ban.service "$WANTS_DIR/fail2ban.service"
+    ln -sf /usr/lib/systemd/system/apparmor.service "$WANTS_DIR/apparmor.service"
+    ln -sf /usr/lib/systemd/system/sshd.service "$WANTS_DIR/sshd.service"
+
+    # Setup Service
+    ln -sf "/etc/systemd/system/setup-hunter.service" "$WANTS_DIR/setup-hunter.service"
+
+    echo '>>> Building ISO...'
     mkarchiso -v -w /tmp/archiso-work -o /hunter-os/out .
 "
 
