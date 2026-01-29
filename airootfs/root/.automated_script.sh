@@ -1,6 +1,7 @@
-#!/bin/bash
-# customize_airootfs.sh - HUNTER OS System Initialization
-# Runs inside the chroot during ISO creation to configure the system
+#!/usr/bin/env bash
+# airootfs/root/.automated_script.sh
+# Modern replacement for customize_airootfs.sh
+# This script runs inside the chroot during ISO creation
 
 set -e -u
 
@@ -204,9 +205,8 @@ find /var/log -type f -exec truncate -s 0 {} \;
 echo ">>> HUNTER OS: System Configuration Complete!"
 echo ">>> Security Features Enabled:"
 echo "    - AppArmor: Mandatory Access Control"
-echo "    - UFW: Firewall (default deny)"
+echo "    - UFW: Firewall (will configure on first boot)"
 echo "    - Fail2Ban: Intrusion Prevention"
 echo "    - SSH: Hardened Configuration"
 echo "    - Kernel: Security Parameters Applied"
 echo "    - Services: Systemd Hardening Active"
-

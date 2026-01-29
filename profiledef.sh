@@ -18,9 +18,10 @@ airootfs_image_tool_options=('-comp' 'zstd' '-Xcompression-level' '3' '-b' '1M')
 file_permissions=(
 
   ["/root"]="0:0:750"
-  ["/root/customize_airootfs.sh"]="0:0:755"
+  ["/root/.automated_script.sh"]="0:0:755"
   ["/usr/local/bin/hunter"]="0:0:755"
   ["/usr/local/bin/hunter-get"]="0:0:755"
+  ["/usr/local/bin/hunter-ufw-setup.sh"]="0:0:755"
   ["/etc/sysctl.d/99-hunter-security.conf"]="0:0:644"
   ["/etc/ufw"]="0:0:755"
   ["/etc/apparmor.d"]="0:0:755"
