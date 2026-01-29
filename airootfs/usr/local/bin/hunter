@@ -6,9 +6,10 @@ COMMAND=$1
 shift # Shift arguments so $@ becomes the rest of the args
 
 print_help() {
-    echo "Usage: hunter [command] [package_name]"
+    echo "HUNTER OS Package Manager"
+    echo "Usage: hunter [command] [options]"
     echo ""
-    echo "Commands:"
+    echo "Package Management:"
     echo "  install [app]    Install an application (e.g., 'hunter install vlc')"
     echo "  remove  [app]    Remove an application"
     echo "  update           Update the entire system"
@@ -19,6 +20,12 @@ print_help() {
     echo "  install dev-c    Install C/C++ Compiler Suite"
     echo "  install dev-node Install NodeJS & Web Tools"
     echo "  install dev-rust Install Rust Toolchain"
+    echo ""
+    echo "Security & System:"
+    echo "  audit            Run comprehensive security audit"
+    echo "  harden           Apply additional system hardening"
+    echo "  firewall [cmd]   Manage firewall (status/enable/disable)"
+    echo "  status           Show system security status"
 }
 
 if [ -z "$COMMAND" ]; then
@@ -63,6 +70,59 @@ case "$COMMAND" in
     clean)
         echo ">>> [hunter] Cleaning Cache..."
         sudo pacman -Sc
+        ;;
+    audit)
+        echo ">>> [hunter] Running Security Audit..."
+        echo ""
+        echo "=== System Security Status ==="
+        echo ""
+        echo "[AppArmor Status]"
+        sudo aa-status 2>/dev/null || echo "AppArmor not available"
+        echo ""
+        echo "[Firewall Status]"
+        sudo ufw status verbose
+        echo ""
+        echo "[Fail2Ban Status]"
+        sudo systemctl status fail2ban --no-pager 2>/dev/null || echo "Fail2Ban not running"
+        echo ""
+        echo "[Security Tools]"
+        if command -v lynis &>/dev/null; then
+            echo "Running Lynis security audit..."
+            sudo lynis audit system --quick --quiet
+        else
+            echo "Lynis not installed. Install with: hunter install lynis"
+        fi
+        ;;
+    harden)
+        echo ">>> [hunter] Applying System Hardening..."
+        sudo sysctl --system
+        echo "Kernel parameters reloaded."
+        ;;
+    firewall)
+        case "$1" in
+            status)
+                sudo ufw status verbose
+                ;;
+            enable)
+                sudo ufw --force enable
+                echo "Firewall enabled."
+                ;;
+            disable)
+                sudo ufw disable
+                echo "Firewall disabled."
+                ;;
+            *)
+                echo "Usage: hunter firewall [status|enable|disable]"
+                ;;
+        esac
+        ;;
+    status)
+        echo ">>> [hunter] System Security Status"
+        echo ""
+        echo "AppArmor:  $(systemctl is-active apparmor 2>/dev/null || echo 'inactive')"
+        echo "Firewall:  $(sudo ufw status | head -n1)"
+        echo "Fail2Ban:  $(systemctl is-active fail2ban 2>/dev/null || echo 'inactive')"
+        echo "SSH:       $(systemctl is-active sshd 2>/dev/null || echo 'inactive')"
         ;;
     *)
         echo "Error: Unknown command '$COMMAND'"

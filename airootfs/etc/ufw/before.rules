@@ -1,0 +1,31 @@
+# UFW Before Rules for HUNTER OS
+# Rules that should be run before the ufw command line added rules
+
+*filter
+:ufw-before-input - [0:0]
+:ufw-before-output - [0:0]
+:ufw-before-forward - [0:0]
+
+# Allow all on loopback
+-A ufw-before-input -i lo -j ACCEPT
+-A ufw-before-output -o lo -j ACCEPT
+
+# Allow established connections
+-A ufw-before-input -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A ufw-before-output -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A ufw-before-forward -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+# Drop invalid packets
+-A ufw-before-input -m conntrack --ctstate INVALID -j DROP
+
+# Allow ICMP (ping) - rate limited
+-A ufw-before-input -p icmp --icmp-type echo-request -m limit --limit 1/s -j ACCEPT
+-A ufw-before-input -p icmp --icmp-type destination-unreachable -j ACCEPT
+-A ufw-before-input -p icmp --icmp-type time-exceeded -j ACCEPT
+-A ufw-before-input -p icmp --icmp-type parameter-problem -j ACCEPT
+
+# Allow DHCP client
+-A ufw-before-input -p udp --sport 67 --dport 68 -j ACCEPT
+
+# Don't delete the 'COMMIT' line or these rules won't be processed
+COMMIT

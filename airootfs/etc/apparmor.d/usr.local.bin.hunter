@@ -1,0 +1,36 @@
+# AppArmor profile for Hunter Package Manager
+# /etc/apparmor.d/usr.local.bin.hunter
+
+#include <tunables/global>
+
+/usr/local/bin/hunter {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/consoles>
+
+  # Allow reading package manager configuration
+  /etc/pacman.conf r,
+  /etc/pacman.d/** r,
+  
+  # Allow executing pacman
+  /usr/bin/pacman rix,
+  /usr/bin/sudo Px,
+  
+  # Allow reading package databases
+  /var/lib/pacman/** r,
+  /var/cache/pacman/** rw,
+  
+  # Allow reading system information
+  /proc/*/stat r,
+  /sys/devices/** r,
+  
+  # Allow writing logs
+  /var/log/pacman.log w,
+  
+  # Deny network access (package manager should not make direct connections)
+  deny network,
+  
+  # Allow executing shell commands
+  /bin/bash ix,
+  /usr/bin/bash ix,
+}

@@ -3,6 +3,8 @@ name: Build HUNTER OS ISO
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -13,15 +15,69 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: Free Disk Space
+      run: |
+        # Remove unnecessary packages to free up space for ISO build
+        sudo apt-get clean
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /opt/ghc
+        sudo rm -rf "/usr/local/share/boost"
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        df -h
+
     - name: Build ISO (Using Docker Script)
       run: |
         chmod +x setup.sh build_with_docker.sh
-        ./setup.sh # Ensures Docker is setup (though pre-installed on verified runners)
+        ./setup.sh
         sudo ./build_with_docker.sh
+
+    - name: Check ISO Size
+      run: |
+        echo "=== ISO Build Complete ==="
+        ls -lh out/*.iso
+        ISO_SIZE=$(du -h out/*.iso | cut -f1)
+        echo "ISO Size: $ISO_SIZE"
+        echo "iso_size=$ISO_SIZE" >> $GITHUB_OUTPUT
+      id: iso_info
 
     - name: Upload ISO Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: hunter-os-iso
+        name: hunter-os-iso-${{ github.sha }}
         path: out/*.iso
-        retention-days: 5
+        retention-days: 7
+        compression-level: 6
+
+    - name: Create Release (on tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: out/*.iso
+        body: |
+          # HUNTER OS Release
+          
+          **ISO Size:** ${{ steps.iso_info.outputs.iso_size }}
+          
+          ## Security Features
+          - AppArmor Mandatory Access Control
+          - UFW Firewall (default deny)
+          - Fail2Ban Intrusion Prevention
+          - Hardened SSH (key-based auth only)
+          - Kernel Security Hardening
+          - Systemd Service Restrictions
+          
+          ## System Requirements
+          - **RAM:** 2GB minimum, 4GB recommended
+          - **Storage:** 20GB minimum
+          - **Architecture:** x86_64 (64-bit)
+          
+          ## Boot Options
+          - Normal Boot
+          - Copy to RAM (requires 2GB+ RAM)
+          - Safe Mode (for hardware issues)
+          - Emergency Shell (for recovery)
+          
+          See [README.md](https://github.com/${{ github.repository }}/blob/main/README.md) for installation instructions.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

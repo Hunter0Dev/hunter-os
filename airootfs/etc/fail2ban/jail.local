@@ -1,0 +1,36 @@
+# Fail2Ban Configuration for HUNTER OS
+# /etc/fail2ban/jail.local
+
+[DEFAULT]
+# Ban hosts for 1 hour
+bantime = 3600
+
+# A host is banned if it has generated "maxretry" during the last "findtime"
+findtime = 600
+maxretry = 5
+
+# Destination email for alerts
+destemail = root@localhost
+sender = fail2ban@hunter-os
+
+# Action to take when threshold is reached
+action = %(action_mwl)s
+
+# Ignore local network
+ignoreip = 127.0.0.1/8 ::1
+
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 7200
+
+[sshd-ddos]
+enabled = true
+port = ssh
+filter = sshd-ddos
+logpath = /var/log/auth.log
+maxretry = 2
+bantime = 7200

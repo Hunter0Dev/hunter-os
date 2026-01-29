@@ -1,0 +1,35 @@
+# AppArmor profile for Hunter-Get Helper
+# /etc/apparmor.d/usr.local.bin.hunter-get
+
+#include <tunables/global>
+
+/usr/local/bin/hunter-get {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/consoles>
+
+  # Allow reading configuration
+  /etc/pacman.conf r,
+  /etc/pacman.d/** r,
+  
+  # Allow executing system commands
+  /usr/bin/pacman rix,
+  /usr/bin/sudo Px,
+  /usr/bin/systemctl rix,
+  /usr/bin/rfkill rix,
+  
+  # Allow reading package databases
+  /var/lib/pacman/** r,
+  
+  # Allow reading system state
+  /proc/*/stat r,
+  /sys/devices/** r,
+  
+  # Allow network management (for wifi/bluetooth fixes)
+  /run/NetworkManager/** rw,
+  /run/systemd/** r,
+  
+  # Allow executing shell
+  /bin/bash ix,
+  /usr/bin/bash ix,
+}

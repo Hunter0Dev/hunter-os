@@ -1,0 +1,7 @@
+# /etc/fstab: static file system information for HUNTER OS
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+
+# tmpfs mounts with security options
+tmpfs           /tmp            tmpfs   defaults,nodev,nosuid,noexec,mode=1777  0 0
+tmpfs           /dev/shm        tmpfs   defaults,nodev,nosuid,noexec            0 0

@@ -1,56 +1,91 @@
+# ============================================
+# HUNTER OS - Package List (Security-Focused)
+# ============================================
+
+# -- Base System --
 base
 linux
 linux-firmware
 intel-ucode
 amd-ucode
+mkinitcpio
+mkinitcpio-archiso
+
+# -- Boot & Filesystem --
 grub
 syslinux
 efibootmgr
 os-prober
 dosfstools
 gptfdisk
+btrfs-progs
+e2fsprogs
+xfsprogs
+ntfs-3g
+
+# -- System Utilities --
 sudo
 vim
 neovim
 git
-btrfs-progs
 man-db
 man-pages
 texinfo
+wget
+curl
+rsync
+tmux
+screen
 
-# -- System & Network --
+# -- Network & Connectivity --
 networkmanager
 iwd
 bluez
 bluez-utils
+openssh
+bind-tools
+traceroute
+whois
+nmap
+
+# -- Audio --
 pipewire
 pipewire-alsa
 pipewire-pulse
 pipewire-jack
 wireplumber
-reflector
-openssh
 
-# -- Security & Sandboxing --
+# -- Security & Hardening --
 firejail
 bubblewrap
 apparmor
 ufw
+fail2ban
+rkhunter
+lynis
+aide
+cryptsetup
+gnupg
+openssl
 
-
-
-# -- Login Manager & Installer --
-
+# -- System Tools --
+htop
+btop
+fastfetch
+reflector
 archinstall
 
-
-
-htop
-fastfetch
-nwg-look
-
-# -- Development (Runtime) --
+# -- Development (Minimal Runtime) --
 python
+python-pip
 lua
 
+# -- Compression & Archives --
+zip
+unzip
+p7zip
+tar
+gzip
+bzip2
+xz
 

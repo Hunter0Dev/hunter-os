@@ -9,13 +9,20 @@ print_help() {
     echo "HUNTER OS Package Helper"
     echo "Usage: hunter-get [install|fix] [package]"
     echo ""
-    echo "Commands:"
+    echo "Development Tools:"
     echo "  install dev-c       Install C/C++ Compilers (GCC, Make, CMake)"
     echo "  install dev-web     Install Web Tools (NodeJS, NPM, Yarn)"
     echo "  install dev-rust    Install Rust Toolchain"
-    echo "  install gaming      Install Steam & Drivers"
+    echo "  install dev-python  Install Python Development Tools"
+    echo ""
+    echo "Security Tools:"
+    echo "  install security-audit    Install Security Auditing Tools"
+    echo "  install pentest           Install Penetration Testing Tools"
+    echo ""
+    echo "System Fixes:"
     echo "  fix wifi            Reset Wi-Fi Adapter"
     echo "  fix bluetooth       Reset Bluetooth Service"
+    echo "  fix permissions     Reset System Permissions"
 }
 
 install_group() {
@@ -43,6 +50,12 @@ case "$ACTION" in
                 # This would require uncommenting multilib in pacman.conf, advanced step.
                 install_group "Gaming Essentials" "steam lutris gamemode"
                 ;;
+            security-audit|sec-audit)
+                install_group "Security Audit Tools" "lynis rkhunter aide chkrootkit"
+                ;;
+            pentest|penetration)
+                install_group "Penetration Testing Tools" "nmap wireshark-cli tcpdump metasploit"
+                ;;
             *)
                 echo "Invoking Pacman for '$TARGET'..."
                 sudo pacman -S --needed $TARGET
@@ -61,6 +74,14 @@ case "$ACTION" in
                 sudo rfkill unblock bluetooth
                 sudo systemctl restart bluetooth
                 echo "Done."
+                ;;
+            permissions|perms)
+                echo ">>> Resetting System Permissions..."
+                sudo chmod 700 /root
+                sudo chmod 755 /usr/local/bin/hunter
+                sudo chmod 755 /usr/local/bin/hunter-get
+                sudo chmod 755 /etc/ssh/sshd_config.d
+                echo "System permissions reset."
                 ;;
             *)
                 print_help
