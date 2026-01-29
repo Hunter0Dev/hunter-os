@@ -63,7 +63,6 @@ ufw
 fail2ban
 rkhunter
 lynis
-aide
 cryptsetup
 gnupg
 openssl

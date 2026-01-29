@@ -51,7 +51,10 @@ case "$ACTION" in
                 install_group "Gaming Essentials" "steam lutris gamemode"
                 ;;
             security-audit|sec-audit)
-                install_group "Security Audit Tools" "lynis rkhunter aide chkrootkit"
+                echo ">>> Installing Security Audit Tools..."
+                install_group "Security Audit Tools" "lynis rkhunter chkrootkit"
+                echo "NOTE: AIDE (file integrity monitor) is in AUR - install manually with:"
+                echo "  yay -S aide  or  paru -S aide"
                 ;;
             pentest|penetration)
                 install_group "Penetration Testing Tools" "nmap wireshark-cli tcpdump metasploit"

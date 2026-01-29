@@ -174,8 +174,18 @@ hunter-get install security-audit
 This installs:
 - `lynis` - Security auditing tool
 - `rkhunter` - Rootkit detection
-- `aide` - File integrity monitoring
 - `chkrootkit` - Rootkit checker
+
+**Note:** AIDE (Advanced Intrusion Detection Environment) is available in AUR only:
+```bash
+# Install an AUR helper first (if not already installed)
+sudo pacman -S --needed base-devel git
+git clone https://aur.archlinux.org/yay.git
+cd yay && makepkg -si
+
+# Then install AIDE
+yay -S aide
+```
 
 **Rootkit Detection:**
 ```bash
@@ -186,8 +196,11 @@ sudo rkhunter --update
 sudo rkhunter --check --skip-keypress
 ```
 
-**File Integrity Monitoring:**
+**File Integrity Monitoring (AIDE):**
 ```bash
+# Install AIDE from AUR first
+yay -S aide
+
 # Initialize AIDE database
 sudo aide --init
 sudo mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
