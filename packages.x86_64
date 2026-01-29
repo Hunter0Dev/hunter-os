@@ -10,6 +10,8 @@ intel-ucode
 amd-ucode
 mkinitcpio
 mkinitcpio-archiso
+mkinitcpio-nfs-utils
+nbd
 
 # -- Boot & Filesystem --
 grub
