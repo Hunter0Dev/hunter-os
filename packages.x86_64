@@ -120,9 +120,7 @@ xf86-video-nouveau
 nvidia-utils
 
 # VM / Virtualization Drivers (CRITICAL for VirtualBox/VMware/QEMU)
-xf86-video-vmware
 xf86-video-qxl
-xf86-video-vboxvideo
 virtualbox-guest-utils
 open-vm-tools
 qemu-guest-agent
