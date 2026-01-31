@@ -188,9 +188,8 @@ ristretto
 mousepad
 
 # -- Package Manager GUI --
-# Note: pamac-aur is from AUR, will be installed post-boot
-# Using octopi as alternative (official repos)
-octopi
+# Note: pamac-aur will be installed on first boot via automated script
+# No GUI package manager in base install (pamac and octopi are both AUR packages)
 
 # -- Productivity Suite --
 # Note: onlyoffice-bin is from AUR, will be installed post-boot

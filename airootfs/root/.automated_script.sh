@@ -253,31 +253,15 @@ EOF
 fi
 
 # ============================================
-# Install AUR Packages (pamac, onlyoffice)
+# Install Pre-built AUR Packages
 # ============================================
-echo ">>> Installing AUR packages..."
+echo ">>> Installing pre-built AUR packages..."
 
-# Install yay (AUR helper) as regular user
-if ! command -v yay &> /dev/null; then
-    echo "Installing yay AUR helper..."
-    cd /tmp
-    sudo -u nobody git clone https://aur.archlinux.org/yay.git
-    cd yay
-    sudo -u nobody makepkg -si --noconfirm
-    cd /
-    rm -rf /tmp/yay
-fi
-
-# Install pamac-aur (GUI package manager)
-if command -v yay &> /dev/null; then
-    echo "Installing pamac-aur..."
-    sudo -u nobody yay -S --noconfirm pamac-aur || echo "pamac-aur installation failed, skipping..."
-fi
-
-# Install onlyoffice-bin (office suite)
-if command -v yay &> /dev/null; then
-    echo "Installing onlyoffice-bin..."
-    sudo -u nobody yay -S --noconfirm onlyoffice-bin || echo "onlyoffice-bin installation failed, skipping..."
+# Install packages that were built during ISO creation
+if [ -f /opt/hunter-packages/install-hunter-packages.sh ]; then
+    /opt/hunter-packages/install-hunter-packages.sh
+else
+    echo "No pre-built packages found, skipping..."
 fi
 
 # ============================================
