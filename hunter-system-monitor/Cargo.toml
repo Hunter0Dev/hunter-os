@@ -1,0 +1,19 @@
+[package]
+name = "hunter-monitor"
+version = "1.0.0"
+edition = "2021"
+authors = ["Hunter OS Team"]
+description = "System monitor for Hunter OS - like Windows Task Manager"
+
+[dependencies]
+sysinfo = "0.30"
+gtk = { version = "0.18", package = "gtk4" }
+glib = "0.18"
+nvml-wrapper = "0.9"  # NVIDIA GPU monitoring
+
+[profile.release]
+opt-level = "z"     # Optimize for size
+lto = true          # Link-time optimization
+codegen-units = 1   # Better optimization
+strip = true        # Strip symbols
+panic = "abort"     # Smaller binary

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Register New User
+Comment=Create a new user account on Hunter OS
+Exec=hunter-register-user-gui
+Icon=system-users
+Terminal=false
+Categories=System;Settings;
+Keywords=user;account;register;create;

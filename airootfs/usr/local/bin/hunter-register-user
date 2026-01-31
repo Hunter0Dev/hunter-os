@@ -1,0 +1,91 @@
+#!/bin/bash
+# Hunter OS User Registration Script
+# Allows users to create their own accounts
+
+set -e
+
+echo "======================================"
+echo "   HUNTER OS - User Registration"
+echo "======================================"
+echo ""
+
+# Check if running as root
+if [ "$EUID" -ne 0 ]; then 
+    echo "This script must be run with sudo"
+    echo "Usage: sudo hunter-register-user"
+    exit 1
+fi
+
+# Get username
+while true; do
+    read -p "Enter new username (lowercase, no spaces): " username
+    
+    # Validate username
+    if [[ ! "$username" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
+        echo "❌ Invalid username. Use only lowercase letters, numbers, underscore, and hyphen."
+        continue
+    fi
+    
+    # Check if user already exists
+    if id "$username" &>/dev/null; then
+        echo "❌ User '$username' already exists. Please choose a different username."
+        continue
+    fi
+    
+    break
+done
+
+# Get password
+while true; do
+    read -s -p "Enter password: " password
+    echo ""
+    read -s -p "Confirm password: " password2
+    echo ""
+    
+    if [ "$password" != "$password2" ]; then
+        echo "❌ Passwords do not match. Please try again."
+        continue
+    fi
+    
+    if [ ${#password} -lt 6 ]; then
+        echo "❌ Password must be at least 6 characters long."
+        continue
+    fi
+    
+    break
+done
+
+# Get full name (optional)
+read -p "Enter full name (optional): " fullname
+
+# Create user
+echo ""
+echo "Creating user account..."
+
+if [ -n "$fullname" ]; then
+    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash -c "$fullname" "$username"
+else
+    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash "$username"
+fi
+
+# Set password
+echo "$username:$password" | chpasswd
+
+# Create user directories
+mkdir -p "/home/$username"/{Documents,Downloads,Pictures,Videos,Music}
+chown -R "$username:$username" "/home/$username"
+
+# Copy default configs
+cp -r /etc/skel/. "/home/$username/"
+chown -R "$username:$username" "/home/$username"
+
+echo ""
+echo "✅ User account created successfully!"
+echo ""
+echo "Username: $username"
+echo "Home directory: /home/$username"
+echo ""
+echo "You can now:"
+echo "  - Login via GUI (logout and select your user)"
+echo "  - SSH: ssh $username@<ip-address>"
+echo ""

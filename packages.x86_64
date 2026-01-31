@@ -76,10 +76,34 @@ fastfetch
 reflector
 archinstall
 
-# -- Development (Minimal Runtime) --
+# -- Development Tools (Compilers & Runtimes) --
+# C/C++ Development
+base-devel
+gcc
+clang
+cmake
+make
+gdb
+valgrind
+
+# Scripting Languages
 python
 python-pip
+python-virtualenv
 lua
+perl
+ruby
+
+# Modern Languages
+nodejs
+npm
+go
+rust
+rustup
+
+# Version Control
+git
+github-cli
 
 # -- Compression & Archives --
 zip
@@ -154,11 +178,45 @@ lightdm-gtk-greeter-settings
 
 # -- GUI Applications --
 firefox
-gvfs
-gvfs-mtp
-gvfs-gphoto2
-udisks2
-udiskie
+vlc
+gimp
+inkscape
+evince
+xarchiver
+file-roller
+ristretto
+mousepad
+
+# -- Package Manager GUI --
+pamac-aur
+
+# -- Productivity Suite --
+onlyoffice-bin
+hunspell
+hunspell-en_us
+
+# -- Media Applications --
+vlc
+rhythmbox
+audacity
+
+# -- Document Viewers --
+evince
+zathura
+zathura-pdf-mupdf
+
+# -- Graphics & Design --
+gimp
+inkscape
+imagemagick
+
+# -- Communication --
+thunderbird
+
+# -- Utilities --
+transmission-gtk
+gparted
+bleachbit
 
 # -- Network Manager GUI --
 network-manager-applet

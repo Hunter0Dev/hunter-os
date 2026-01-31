@@ -24,31 +24,35 @@ docker run --privileged --rm -v "$(pwd):/hunter-os" hunter-builder /bin/bash -c 
         cp -r /usr/share/archiso/configs/releng/efiboot /hunter-os/
     fi
 
-    echo '>>> Enabling System Services...'
-    # Create systemd symlinks
-    SYSTEMD_DIR="/hunter-os/airootfs/etc/systemd/system"
-    WANTS_DIR="$SYSTEMD_DIR/multi-user.target.wants"
-    mkdir -p "$WANTS_DIR"
+    echo '>>> Configuring System Services...'
+    # Create systemd directory structure
+    SYSTEMD_DIR=\"/hunter-os/airootfs/etc/systemd/system\"
+    mkdir -p \"\$SYSTEMD_DIR/multi-user.target.wants\"
+    mkdir -p \"\$SYSTEMD_DIR/graphical.target.wants\"
 
-    # Display Manager (LightDM)
-    ln -sf /usr/lib/systemd/system/lightdm.service "$SYSTEMD_DIR/display-manager.service"
+    # CRITICAL: Set graphical.target as default (this is what makes GUI boot)
+    ln -sf /usr/lib/systemd/system/graphical.target \"\$SYSTEMD_DIR/default.target\"
 
-    # Network Manager
-    ln -sf /usr/lib/systemd/system/NetworkManager.service "$WANTS_DIR/NetworkManager.service"
+    # Enable Display Manager in graphical.target (NOT multi-user.target)
+    ln -sf /usr/lib/systemd/system/lightdm.service \"\$SYSTEMD_DIR/graphical.target.wants/lightdm.service\"
+    ln -sf /usr/lib/systemd/system/lightdm.service \"\$SYSTEMD_DIR/display-manager.service\"
+
+    # Enable Network Manager
+    ln -sf /usr/lib/systemd/system/NetworkManager.service \"\$SYSTEMD_DIR/multi-user.target.wants/NetworkManager.service\"
     
-    # Security Services
-    ln -sf /usr/lib/systemd/system/ufw.service "$WANTS_DIR/ufw.service"
-    ln -sf /usr/lib/systemd/system/fail2ban.service "$WANTS_DIR/fail2ban.service"
-    ln -sf /usr/lib/systemd/system/apparmor.service "$WANTS_DIR/apparmor.service"
-    ln -sf /usr/lib/systemd/system/sshd.service "$WANTS_DIR/sshd.service"
+    # Enable Security Services
+    ln -sf /usr/lib/systemd/system/ufw.service \"\$SYSTEMD_DIR/multi-user.target.wants/ufw.service\" 2>/dev/null || true
+    ln -sf /usr/lib/systemd/system/fail2ban.service \"\$SYSTEMD_DIR/multi-user.target.wants/fail2ban.service\" 2>/dev/null || true
+    ln -sf /usr/lib/systemd/system/apparmor.service \"\$SYSTEMD_DIR/multi-user.target.wants/apparmor.service\" 2>/dev/null || true
+    ln -sf /usr/lib/systemd/system/sshd.service \"\$SYSTEMD_DIR/multi-user.target.wants/sshd.service\" 2>/dev/null || true
 
-    # Virtualization Services (Auto-detects and runs if in VM)
-    ln -sf /usr/lib/systemd/system/vboxservice.service "$WANTS_DIR/vboxservice.service"
-    ln -sf /usr/lib/systemd/system/vmtoolsd.service "$WANTS_DIR/vmtoolsd.service"
-    ln -sf /usr/lib/systemd/system/qemu-guest-agent.service "$WANTS_DIR/qemu-guest-agent.service"
+    # Enable Virtualization Services (will fail gracefully if not in VM)
+    ln -sf /usr/lib/systemd/system/vboxservice.service \"\$SYSTEMD_DIR/multi-user.target.wants/vboxservice.service\" 2>/dev/null || true
+    ln -sf /usr/lib/systemd/system/vmtoolsd.service \"\$SYSTEMD_DIR/multi-user.target.wants/vmtoolsd.service\" 2>/dev/null || true
+    ln -sf /usr/lib/systemd/system/qemu-guest-agent.service \"\$SYSTEMD_DIR/multi-user.target.wants/qemu-guest-agent.service\" 2>/dev/null || true
 
-    # Setup Service
-    ln -sf "/etc/systemd/system/setup-hunter.service" "$WANTS_DIR/setup-hunter.service"
+    # Enable Setup Service
+    ln -sf /etc/systemd/system/setup-hunter.service \"\$SYSTEMD_DIR/multi-user.target.wants/setup-hunter.service\"
 
     echo '>>> Building ISO...'
     mkarchiso -v -w /tmp/archiso-work -o /hunter-os/out .

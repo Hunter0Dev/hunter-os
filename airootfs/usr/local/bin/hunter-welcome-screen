@@ -1,0 +1,35 @@
+#!/bin/bash
+# Hunter OS First Boot Welcome Screen
+# Shows when no user accounts exist (except hunter)
+
+set -e
+
+# Check if this is first boot (only hunter user exists)
+USER_COUNT=$(ls /home 2>/dev/null | grep -v hunter | wc -l)
+
+if [ "$USER_COUNT" -eq 0 ]; then
+    # First boot - show welcome screen
+    zenity --info \
+        --title="Welcome to Hunter OS" \
+        --width=500 \
+        --height=300 \
+        --text="<big><b>Welcome to Hunter OS!</b></big>\n\n\
+This is your first time booting Hunter OS.\n\n\
+<b>To get started, you need to create your user account.</b>\n\n\
+Click OK to create your account now." \
+        --icon-name=dialog-information
+
+    # Launch account creation
+    /usr/local/bin/lightdm-register-user
+    
+    # If account creation succeeded, show success message
+    if [ $? -eq 0 ]; then
+        zenity --info \
+            --title="Account Created" \
+            --width=400 \
+            --text="<b>Your account has been created successfully!</b>\n\n\
+The login screen will now appear.\n\
+Select your username and enter your password to login." \
+            --icon-name=dialog-information
+    fi
+fi

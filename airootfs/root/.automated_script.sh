@@ -30,8 +30,18 @@ fi
 # Enable Critical Services
 # ============================================
 echo ">>> Enabling system services..."
+
+# Set graphical target as default (CRITICAL for GUI boot)
+systemctl set-default graphical.target
+
+# Enable Display Manager
+systemctl enable lightdm
+
+# Enable Network and Bluetooth
 systemctl enable NetworkManager
 systemctl enable bluetooth
+
+# Enable Security Services
 systemctl enable apparmor
 systemctl enable ufw
 systemctl enable fail2ban
@@ -196,15 +206,41 @@ echo ">>> Configuring display manager..."
 if command -v lightdm &> /dev/null; then
     systemctl enable lightdm
     
-    # Configure auto-login for live environment
+    # Configure LightDM for Live Environment (Ubuntu-style)
+    # Auto-login for testing, account creation only during installation
     mkdir -p /etc/lightdm
     cat > /etc/lightdm/lightdm.conf << 'EOF'
 [Seat:*]
+# Auto-login for live environment (testing mode)
 autologin-user=hunter
+autologin-user-timeout=0
 autologin-session=xfce
+
+# Session configuration
 user-session=xfce
 greeter-session=lightdm-gtk-greeter
+greeter-hide-users=false
+allow-guest=false
+
+# Show manual login option (for after installation)
+greeter-show-manual-login=true
+greeter-show-remote-login=false
 EOF
+
+    # Configure LightDM greeter
+    cat > /etc/lightdm/lightdm-gtk-greeter.conf << 'EOF'
+[greeter]
+theme-name=Adwaita-dark
+icon-theme-name=Adwaita
+font-name=Sans 10
+background=#1a1a1a
+
+# Show indicators
+indicators=~host;~spacer;~clock;~spacer;~session;~a11y;~power
+EOF
+    
+    # Don't hide hunter user in live environment
+    # (It will be hidden after installation when real users are created)
 
     # Configure LightDM greeter theme
     cat > /etc/lightdm/lightdm-gtk-greeter.conf << 'EOF'
@@ -214,6 +250,41 @@ icon-theme-name=Adwaita
 font-name=Sans 10
 background=#1a1a1a
 EOF
+fi
+
+# ============================================
+# Set Hunter OS Wallpaper
+# ============================================
+echo ">>> Setting Hunter OS wallpaper..."
+if [ -f /usr/local/bin/hunter-set-wallpaper ]; then
+    chmod +x /usr/local/bin/hunter-set-wallpaper
+    /usr/local/bin/hunter-set-wallpaper
+fi
+
+# ============================================
+# Build Hunter System Monitor (Rust)
+# ============================================
+echo ">>> Building Hunter System Monitor..."
+if [ -d /hunter-system-monitor ]; then
+    cd /hunter-system-monitor
+    
+    # Install Rust if not present
+    if ! command -v cargo &> /dev/null; then
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+        source "$HOME/.cargo/env"
+    fi
+    
+    # Build release binary
+    cargo build --release
+    
+    # Install binary
+    cp target/release/hunter-monitor /usr/local/bin/
+    chmod +x /usr/local/bin/hunter-monitor
+    
+    # Clean up build artifacts
+    cargo clean
+    
+    cd /
 fi
 
 # ============================================

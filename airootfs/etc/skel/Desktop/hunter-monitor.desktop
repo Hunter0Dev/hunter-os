@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hunter System Monitor
+Comment=Monitor system resources and processes (like Windows Task Manager)
+Exec=hunter-monitor
+Icon=utilities-system-monitor
+Terminal=false
+Categories=System;Monitor;GTK;
+Keywords=system;process;task;manager;cpu;memory;performance;
+StartupNotify=true

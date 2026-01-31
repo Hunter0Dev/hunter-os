@@ -1,0 +1,36 @@
+#!/bin/bash
+# Create wrapper .desktop files for heavy applications
+# These will show warnings on low-end systems
+
+APPS_DIR="/usr/share/applications"
+WRAPPER_DIR="/usr/local/share/applications"
+
+mkdir -p "$WRAPPER_DIR"
+
+# List of heavy apps to wrap
+HEAVY_APPS=(
+    "libreoffice-writer.desktop"
+    "libreoffice-calc.desktop"
+    "libreoffice-impress.desktop"
+    "gimp.desktop"
+    "inkscape.desktop"
+    "thunderbird.desktop"
+    "audacity.desktop"
+)
+
+for app_file in "${HEAVY_APPS[@]}"; do
+    if [ -f "$APPS_DIR/$app_file" ]; then
+        # Read original desktop file
+        original_exec=$(grep "^Exec=" "$APPS_DIR/$app_file" | head -n1 | cut -d= -f2-)
+        
+        # Create wrapper desktop file
+        cp "$APPS_DIR/$app_file" "$WRAPPER_DIR/$app_file"
+        
+        # Replace Exec line with wrapper
+        sed -i "s|^Exec=.*|Exec=/usr/local/bin/hunter-app-checker $original_exec|" "$WRAPPER_DIR/$app_file"
+        
+        echo "Created wrapper for $app_file"
+    fi
+done
+
+echo "Hardware checker wrappers created successfully!"

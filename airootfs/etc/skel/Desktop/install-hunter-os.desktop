@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install Hunter OS
+Comment=Install Hunter OS to your hard drive
+Exec=sudo hunter-install
+Icon=system-software-install
+Terminal=false
+Categories=System;Settings;
+Keywords=install;installer;setup;

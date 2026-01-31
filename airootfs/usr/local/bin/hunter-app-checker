@@ -1,0 +1,114 @@
+#!/bin/bash
+# Hunter OS - Hardware Detection and App Compatibility Checker
+# Warns users if their system can't handle heavy applications
+
+# Detect system resources
+get_total_ram_mb() {
+    grep MemTotal /proc/meminfo | awk '{print int($2/1024)}'
+}
+
+get_cpu_cores() {
+    nproc
+}
+
+get_cpu_model() {
+    grep "model name" /proc/cpuinfo | head -n1 | cut -d: -f2 | xargs
+}
+
+# Check if system is low-end
+is_low_end_system() {
+    local ram_mb=$(get_total_ram_mb)
+    local cores=$(get_cpu_cores)
+    
+    # Low-end if RAM <= 2GB or single core
+    if [ "$ram_mb" -le 2048 ] || [ "$cores" -le 1 ]; then
+        return 0  # true
+    else
+        return 1  # false
+    fi
+}
+
+# Heavy applications list with RAM requirements
+declare -A HEAVY_APPS=(
+    ["libreoffice"]="400"
+    ["soffice"]="400"
+    ["gimp"]="300"
+    ["gimp-2.10"]="300"
+    ["inkscape"]="200"
+    ["thunderbird"]="200"
+    ["audacity"]="150"
+)
+
+# Check if app is heavy
+is_heavy_app() {
+    local app_name="$1"
+    local base_name=$(basename "$app_name")
+    
+    for heavy_app in "${!HEAVY_APPS[@]}"; do
+        if [[ "$base_name" == *"$heavy_app"* ]]; then
+            echo "${HEAVY_APPS[$heavy_app]}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Show warning dialog
+show_warning() {
+    local app_name="$1"
+    local ram_needed="$2"
+    local total_ram=$(get_total_ram_mb)
+    local cpu_model=$(get_cpu_model)
+    
+    zenity --warning \
+        --title="Hardware Compatibility Warning" \
+        --width=500 \
+        --text="<b>⚠️ Your system may not handle this application well</b>\n\n\
+<b>Application:</b> $app_name\n\
+<b>RAM Required:</b> ~${ram_needed} MB\n\n\
+<b>Your System:</b>\n\
+• RAM: ${total_ram} MB\n\
+• CPU: $cpu_model\n\n\
+<b>Recommendation:</b>\n\
+• Close other applications before running this\n\
+• Expect slower performance\n\
+• Consider using lighter alternatives\n\n\
+Do you want to continue anyway?" \
+        --ok-label="Run Anyway" \
+        --cancel-label="Cancel"
+    
+    return $?
+}
+
+# Main wrapper function
+check_and_run() {
+    local app_command="$1"
+    shift  # Remove first argument, rest are app arguments
+    
+    # Only check on low-end systems
+    if is_low_end_system; then
+        local ram_needed=$(is_heavy_app "$app_command")
+        
+        if [ $? -eq 0 ]; then
+            # App is heavy, show warning
+            if show_warning "$app_command" "$ram_needed"; then
+                # User clicked "Run Anyway"
+                exec "$app_command" "$@"
+            else
+                # User cancelled
+                exit 0
+            fi
+        else
+            # App is not heavy, run normally
+            exec "$app_command" "$@"
+        fi
+    else
+        # System is not low-end, run normally
+        exec "$app_command" "$@"
+    fi
+}
+
+# If called directly with app name
+if [ $# -gt 0 ]; then
+    check_and_run "$@"
+fi

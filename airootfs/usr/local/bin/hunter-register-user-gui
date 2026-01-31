@@ -1,0 +1,14 @@
+#!/bin/bash
+# Hunter OS - Quick User Registration (GUI Wrapper)
+# Launches terminal for user registration
+
+if [ "$EUID" -eq 0 ]; then
+    echo "Please run this without sudo. The script will ask for your password when needed."
+    exit 1
+fi
+
+# Launch terminal with the registration script
+xfce4-terminal --title="Hunter OS - User Registration" \
+               --geometry=80x24 \
+               --hold \
+               --execute sudo hunter-register-user

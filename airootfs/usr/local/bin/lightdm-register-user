@@ -1,0 +1,79 @@
+#!/bin/bash
+# LightDM New User Registration Script
+# This runs when user clicks "Create Account" at login screen
+
+set -e
+
+# Get username
+USERNAME=$(zenity --entry \
+    --title="Create New Account" \
+    --text="Enter your username (lowercase, no spaces):" \
+    --width=400)
+
+if [ -z "$USERNAME" ]; then
+    zenity --error --text="Username cannot be empty"
+    exit 1
+fi
+
+# Validate username
+if [[ ! "$USERNAME" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
+    zenity --error --text="Invalid username. Use only lowercase letters, numbers, underscore, and hyphen."
+    exit 1
+fi
+
+# Check if user exists
+if id "$USERNAME" &>/dev/null; then
+    zenity --error --text="User '$USERNAME' already exists. Please choose a different username."
+    exit 1
+fi
+
+# Get password
+PASSWORD=$(zenity --password \
+    --title="Create New Account" \
+    --text="Enter password for $USERNAME:")
+
+if [ -z "$PASSWORD" ]; then
+    zenity --error --text="Password cannot be empty"
+    exit 1
+fi
+
+# Confirm password
+PASSWORD2=$(zenity --password \
+    --title="Create New Account" \
+    --text="Confirm password:")
+
+if [ "$PASSWORD" != "$PASSWORD2" ]; then
+    zenity --error --text="Passwords do not match!"
+    exit 1
+fi
+
+# Get full name (optional)
+FULLNAME=$(zenity --entry \
+    --title="Create New Account" \
+    --text="Enter your full name (optional):" \
+    --width=400)
+
+# Create user
+if [ -n "$FULLNAME" ]; then
+    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash -c "$FULLNAME" "$USERNAME"
+else
+    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash "$USERNAME"
+fi
+
+# Set password
+echo "$USERNAME:$PASSWORD" | chpasswd
+
+# Create user directories
+mkdir -p "/home/$USERNAME"/{Documents,Downloads,Pictures,Videos,Music}
+chown -R "$USERNAME:$USERNAME" "/home/$USERNAME"
+
+# Copy default configs
+cp -r /etc/skel/. "/home/$USERNAME/"
+chown -R "$USERNAME:$USERNAME" "/home/$USERNAME"
+
+zenity --info \
+    --title="Account Created" \
+    --text="Account created successfully!\n\nUsername: $USERNAME\n\nYou can now login with your new account." \
+    --width=400
+
+exit 0
