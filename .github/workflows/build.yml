@@ -1,24 +1,72 @@
-name: Build ISO
+name: Build Hunter OS ISO
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Create out directory
-        run: mkdir -p out
-
-      - name: Build ISO
-        run: ./build-iso.sh
-      - name: Upload ISO
-        uses: actions/upload-artifact@v2
-        with:
-          name: my-iso
-          path: path/to/your/iso/file
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Free up disk space
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /opt/ghc
+        sudo rm -rf "/usr/local/share/boost"
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        sudo apt-get clean
+        df -h
+        
+    - name: Build Hunter OS ISO
+      run: |
+        chmod +x build_with_docker.sh
+        ./build_with_docker.sh
+        
+    - name: List output files
+      run: |
+        echo "=== Build Complete ==="
+        ls -lh out/ || echo "No out directory found"
+        du -h out/*.iso || echo "No ISO found"
+        
+    - name: Upload ISO as Artifact
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: hunter-os-iso-${{ github.run_number }}
+        path: out/*.iso
+        retention-days: 1
+        compression-level: 0
+        
+    - name: Create Release (on tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: out/*.iso
+        body: |
+          # Hunter OS Release ${{ github.ref_name }}
+          
+          ## Download
+          Download the ISO below and write it to a USB drive.
+          
+          ## System Requirements
+          - **RAM:** 2GB minimum, 4GB recommended
+          - **Storage:** 20GB minimum
+          - **Architecture:** x86_64 (64-bit)
+          
+          ## Features
+          - Smart hardware detection
+          - Automatic profile selection
+          - 100+ packages included
+          - Security hardening (AppArmor, UFW, Fail2ban)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
