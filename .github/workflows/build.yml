@@ -1,70 +1,24 @@
-name: Build Hunter OS ISO
+name: Build ISO
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Best for Docker builds, most stable
-    
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Free up disk space
-      run: |
-        # GitHub runners have limited space, clean up
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /opt/ghc
-        sudo rm -rf "/usr/local/share/boost"
-        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-        sudo apt-get clean
-        df -h
-        
-    - name: Build Hunter OS ISO
-      run: |
-        chmod +x build_with_docker.sh
-        ./build_with_docker.sh
-        
-    - name: List output files
-      run: |
-        echo "=== Build Complete ==="
-        ls -lh out/
-        du -h out/*.iso
-        
-    # Don't upload as artifact (saves storage quota)
-    # ISO is too large for GitHub artifacts (500 MB limit on free tier)
-    # Use GitHub Releases instead (unlimited storage)
-        
-    - name: Create Release (on tag)
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: out/*.iso
-        body: |
-          - Hardened SSH (key-based auth only)
-          - Kernel Security Hardening
-          - Systemd Service Restrictions
-          
-          ## System Requirements
-          - **RAM:** 2GB minimum, 4GB recommended
-          - **Storage:** 20GB minimum
-          - **Architecture:** x86_64 (64-bit)
-          
-          ## Boot Options
-          - Normal Boot
-          - Copy to RAM (requires 2GB+ RAM)
-          - Safe Mode (for hardware issues)
-          - Emergency Shell (for recovery)
-          
-          See [README.md](https://github.com/${{ github.repository }}/blob/main/README.md) for installation instructions.
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v2
 
+      - name: Create out directory
+        run: mkdir -p out
+
+      - name: Build ISO
+        run: ./build-iso.sh
+      - name: Upload ISO
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-iso
+          path: path/to/your/iso/file
