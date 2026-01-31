@@ -188,10 +188,14 @@ ristretto
 mousepad
 
 # -- Package Manager GUI --
-pamac-aur
+# Note: pamac-aur is from AUR, will be installed post-boot
+# Using octopi as alternative (official repos)
+octopi
 
 # -- Productivity Suite --
-onlyoffice-bin
+# Note: onlyoffice-bin is from AUR, will be installed post-boot
+# Using LibreOffice as fallback for now
+libreoffice-fresh
 hunspell
 hunspell-en_us
 

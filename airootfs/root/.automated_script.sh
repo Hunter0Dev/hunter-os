@@ -253,6 +253,34 @@ EOF
 fi
 
 # ============================================
+# Install AUR Packages (pamac, onlyoffice)
+# ============================================
+echo ">>> Installing AUR packages..."
+
+# Install yay (AUR helper) as regular user
+if ! command -v yay &> /dev/null; then
+    echo "Installing yay AUR helper..."
+    cd /tmp
+    sudo -u nobody git clone https://aur.archlinux.org/yay.git
+    cd yay
+    sudo -u nobody makepkg -si --noconfirm
+    cd /
+    rm -rf /tmp/yay
+fi
+
+# Install pamac-aur (GUI package manager)
+if command -v yay &> /dev/null; then
+    echo "Installing pamac-aur..."
+    sudo -u nobody yay -S --noconfirm pamac-aur || echo "pamac-aur installation failed, skipping..."
+fi
+
+# Install onlyoffice-bin (office suite)
+if command -v yay &> /dev/null; then
+    echo "Installing onlyoffice-bin..."
+    sudo -u nobody yay -S --noconfirm onlyoffice-bin || echo "onlyoffice-bin installation failed, skipping..."
+fi
+
+# ============================================
 # Set Hunter OS Wallpaper
 # ============================================
 echo ">>> Setting Hunter OS wallpaper..."

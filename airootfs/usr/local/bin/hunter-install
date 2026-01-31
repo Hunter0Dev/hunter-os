@@ -64,7 +64,7 @@ get_heavy_apps_to_remove() {
     
     if [ "$profile" = "lite" ]; then
         # Remove heavy apps for 2GB systems
-        echo "onlyoffice-bin gimp inkscape thunderbird audacity"
+        echo "libreoffice-fresh gimp inkscape thunderbird audacity"
     else
         # Keep everything for 4GB+ systems
         echo ""
@@ -118,7 +118,7 @@ Hunter OS will install with optimized packages:\n\n\
 ✅ All development tools\n\
 ✅ System utilities\n\n\
 <b>Not Included (to save RAM):</b>\n\
-❌ OnlyOffice (use Google Docs instead)\n\
+❌ LibreOffice (use Google Docs instead)\n\
 ❌ GIMP (use online editors)\n\
 ❌ Thunderbird (use web email)\n\n\
 This ensures smooth performance on your system!"
@@ -129,7 +129,7 @@ else
         --text="<b>$PROFILE_DESC Profile Selected</b>\n\n\
 Your system has sufficient resources (${RAM_MB} MB RAM).\n\
 Hunter OS will install with all features:\n\n\
-✅ OnlyOffice suite (lighter than LibreOffice!)\n\
+✅ LibreOffice suite\n\
 ✅ GIMP image editor\n\
 ✅ VLC media player\n\
 ✅ Thunderbird email\n\

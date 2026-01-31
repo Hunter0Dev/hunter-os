@@ -1,34 +1,32 @@
-name: Build HUNTER OS ISO
+name: Build Hunter OS ISO
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build-iso:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest  # Best for Docker builds, most stable
     
     steps:
-    - name: Checkout Repository
+    - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Free Disk Space
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Free up disk space
       run: |
-        # Remove unnecessary packages to free up space for ISO build
-        sudo apt-get clean
+        # GitHub runners have limited space, clean up
         sudo rm -rf /usr/share/dotnet
         sudo rm -rf /opt/ghc
         sudo rm -rf "/usr/local/share/boost"
         sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        sudo apt-get clean
         df -h
-
-    - name: Build ISO (Using Docker Script)
-      run: |
-        chmod +x setup.sh build_with_docker.sh
-        ./setup.sh
         sudo ./build_with_docker.sh
 
     - name: Check ISO Size
