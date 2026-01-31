@@ -27,39 +27,28 @@ jobs:
         sudo rm -rf "$AGENT_TOOLSDIRECTORY"
         sudo apt-get clean
         df -h
-        sudo ./build_with_docker.sh
-
-    - name: Check ISO Size
+        
+    - name: Build Hunter OS ISO
       run: |
-        echo "=== ISO Build Complete ==="
-        ls -lh out/*.iso
-        ISO_SIZE=$(du -h out/*.iso | cut -f1)
-        echo "ISO Size: $ISO_SIZE"
-        echo "iso_size=$ISO_SIZE" >> $GITHUB_OUTPUT
-      id: iso_info
-
-    - name: Upload ISO Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: hunter-os-iso-${{ github.sha }}
-        path: out/*.iso
-        retention-days: 7
-        compression-level: 6
-
+        chmod +x build_with_docker.sh
+        ./build_with_docker.sh
+        
+    - name: List output files
+      run: |
+        echo "=== Build Complete ==="
+        ls -lh out/
+        du -h out/*.iso
+        
+    # Don't upload as artifact (saves storage quota)
+    # ISO is too large for GitHub artifacts (500 MB limit on free tier)
+    # Use GitHub Releases instead (unlimited storage)
+        
     - name: Create Release (on tag)
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
         files: out/*.iso
         body: |
-          # HUNTER OS Release
-          
-          **ISO Size:** ${{ steps.iso_info.outputs.iso_size }}
-          
-          ## Security Features
-          - AppArmor Mandatory Access Control
-          - UFW Firewall (default deny)
-          - Fail2Ban Intrusion Prevention
           - Hardened SSH (key-based auth only)
           - Kernel Security Hardening
           - Systemd Service Restrictions

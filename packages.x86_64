@@ -6,6 +6,16 @@
 base
 linux
 linux-firmware
+
+# -- Additional Firmware (for rare/enterprise hardware) --
+linux-firmware-qlogic
+linux-firmware-bnx2x
+linux-firmware-liquidio
+linux-firmware-marvell
+sof-firmware
+alsa-firmware
+
+# -- CPU Microcode --
 intel-ucode
 amd-ucode
 mkinitcpio
