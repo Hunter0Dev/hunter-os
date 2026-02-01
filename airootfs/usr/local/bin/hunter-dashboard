@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+import gi
+import os
+import subprocess
+
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, Pango
+
+class HunterDashboard(Gtk.Window):
+    def __init__(self):
+        super().__init__(title="Hunter OS Dashboard")
+        self.set_default_size(800, 500)
+        self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_border_width(20)
+        
+        # Header
+        header = Gtk.HeaderBar()
+        header.set_show_close_button(True)
+        header.set_title("Hunter OS")
+        self.set_titlebar(header)
+        
+        # Main Layout
+        grid = Gtk.Grid()
+        grid.set_column_spacing(20)
+        grid.set_row_spacing(20)
+        grid.set_halign(Gtk.Align.CENTER)
+        grid.set_valign(Gtk.Align.CENTER)
+        self.add(grid)
+        
+        # Logo (if exists)
+        if os.path.exists("/usr/share/pixmaps/hunter-os.png"):
+            logobuf = Gdk.Pixbuf.new_from_file_at_scale("/usr/share/pixmaps/hunter-os.png", 128, 128, True)
+            logo = Gtk.Image.new_from_pixbuf(logobuf)
+            grid.attach(logo, 0, 0, 3, 1) # Span 3 columns
+            
+        # Welcome Text
+        label = Gtk.Label()
+        label.set_markup("<span size='xx-large' weight='bold'>Welcome to Hunter OS</span>")
+        grid.attach(label, 0, 1, 3, 1)
+        
+        # Buttons
+        self.create_button(grid, "🚀 Install Hunter OS", "system-software-install", self.on_install, 0, 2)
+        self.create_button(grid, "🤖 AI Assistant", "applications-science", self.on_ai, 1, 2)
+        self.create_button(grid, "📚 Documentation", "help-browser", self.on_docs, 2, 2)
+        
+        self.create_button(grid, "🌐 Browse Web", "web-browser", self.on_web, 0, 3)
+        self.create_button(grid, "💻 Terminal", "utilities-terminal", self.on_term, 1, 3)
+        self.create_button(grid, "📈 System Monitor", "utilities-system-monitor", self.on_monitor, 2, 3)
+
+    def create_button(self, grid, label_text, icon_name, callback, col, row):
+        btn = Gtk.Button()
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        box.set_border_width(15)
+        
+        img = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.DIALOG)
+        lbl = Gtk.Label(label=label_text)
+        
+        box.pack_start(img, True, True, 0)
+        box.pack_start(lbl, False, False, 0)
+        
+        btn.add(box)
+        btn.connect("clicked", callback)
+        btn.set_size_request(200, 120)
+        grid.attach(btn, col, row, 1, 1)
+
+    def on_install(self, w):
+        subprocess.Popen(["calamares"])
+        
+    def on_ai(self, w):
+        subprocess.Popen(["hunter-ai-gui"])
+        
+    def on_docs(self, w):
+        # Open local docs or README
+        subprocess.Popen(["xfce4-terminal", "-e", "less /usr/share/doc/hunter-os/README.md"])
+
+    def on_web(self, w):
+        subprocess.Popen(["firefox"])
+        
+    def on_term(self, w):
+        subprocess.Popen(["xfce4-terminal"])
+        
+    def on_monitor(self, w):
+        subprocess.Popen(["hunter-monitor"])
+
+if __name__ == "__main__":
+    win = HunterDashboard()
+    win.connect("destroy", Gtk.main_quit)
+    win.show_all()
+    Gtk.main()

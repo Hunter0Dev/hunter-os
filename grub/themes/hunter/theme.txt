@@ -1,0 +1,55 @@
+# GRUB2 Theme for HUNTER OS
+# Cybersecurity-focused design with cyan/black color scheme
+
+# General settings
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#000000"
+terminal-font: "Unifont Regular 16"
+
+# Boot menu
++ boot_menu {
+  left = 25%
+  width = 50%
+  top = 40%
+  height = 35%
+  
+  item_color = "#00ffff"
+  selected_item_color = "#ffffff"
+  item_font = "Unifont Regular 16"
+  item_height = 32
+  item_padding = 8
+  item_spacing = 4
+  
+  selected_item_pixmap_style = "select_*.png"
+}
+
+# Progress bar (for loading)
++ progress_bar {
+  id = "__timeout__"
+  left = 25%
+  width = 50%
+  top = 80%
+  height = 24
+  
+  fg_color = "#00ffff"
+  bg_color = "#1a1a1a"
+  border_color = "#00ffff"
+  
+  text = ""
+  font = "Unifont Regular 14"
+  text_color = "#00ffff"
+}
+
+# Label for timeout
++ label {
+  top = 85%
+  left = 0
+  width = 100%
+  height = 20
+  align = "center"
+  id = "__timeout_label__"
+  text = "Booting in %d seconds"
+  color = "#00ffff"
+  font = "Unifont Regular 14"
+}

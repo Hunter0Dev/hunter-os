@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hunter Welcome
+Comment=Welcome screen and quick start guide
+Exec=hunter-dashboard
+Icon=hunter-os
+Terminal=false
+Categories=System;Utility;
+Keywords=welcome;guide;tutorial;
+StartupNotify=true

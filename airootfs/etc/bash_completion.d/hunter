@@ -1,0 +1,42 @@
+# Hunter OS bash completion
+# /etc/bash_completion.d/hunter
+
+_hunter_completion() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    
+    # Main hunter commands
+    opts="--help --version update search install remove list"
+    
+    case "${prev}" in
+        hunter)
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
+            ;;
+        search|install|remove)
+            # Could add tool name completion here
+            return 0
+            ;;
+        *)
+            ;;
+    esac
+}
+
+complete -F _hunter_completion hunter
+
+# hunter-get completion
+_hunter_get_completion() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    
+    opts="update install remove search list --help"
+    
+    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+    return 0
+}
+
+complete -F _hunter_get_completion hunter-get

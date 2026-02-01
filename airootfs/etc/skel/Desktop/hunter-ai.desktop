@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hunter AI Assistant
+Comment=AI coding assistant powered by Qwen2.5-Coder
+Exec=hunter-ai-gui
+Icon=applications-science
+Terminal=false
+Categories=Development;Utility;
+Keywords=ai;assistant;coding;programming;llm;
+StartupNotify=true

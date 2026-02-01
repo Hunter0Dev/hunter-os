@@ -241,15 +241,6 @@ EOF
     
     # Don't hide hunter user in live environment
     # (It will be hidden after installation when real users are created)
-
-    # Configure LightDM greeter theme
-    cat > /etc/lightdm/lightdm-gtk-greeter.conf << 'EOF'
-[greeter]
-theme-name=Adwaita-dark
-icon-theme-name=Adwaita
-font-name=Sans 10
-background=#1a1a1a
-EOF
 fi
 
 # ============================================
@@ -320,3 +311,34 @@ echo "    - Fail2Ban: Intrusion Prevention"
 echo "    - SSH: Hardened Configuration"
 echo "    - Kernel: Security Parameters Applied"
 echo "    - Services: Systemd Hardening Active"
+
+# ============================================
+# Plymouth Boot Splash Configuration
+# ============================================
+echo ">>> Configuring Plymouth boot splash..."
+
+if command -v plymouth-set-default-theme &> /dev/null; then
+    # Set spinner theme
+    plymouth-set-default-theme -R spinner
+    
+    # Rebuild initramfs with Plymouth
+    mkinitcpio -P
+    
+    echo "✓ Plymouth configured with spinner theme"
+else
+    echo "INFO: Plymouth not installed, skipping boot splash configuration"
+fi
+
+# ============================================
+# Hunter AI Assistant Setup
+# ============================================
+echo ">>> Setting up Hunter AI Assistant..."
+
+# Run AI setup script
+if [ -f /usr/local/bin/hunter-ai-setup ]; then
+    bash /usr/local/bin/hunter-ai-setup
+else
+    echo "WARNING: hunter-ai-setup script not found, skipping AI installation"
+fi
+
+echo ">>> HUNTER OS: System Configuration Complete!"

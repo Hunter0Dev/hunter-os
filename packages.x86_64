@@ -52,6 +52,7 @@ screen
 # -- Network & Connectivity --
 networkmanager
 iwd
+wpa_supplicant
 bluez
 bluez-utils
 openssh
@@ -100,6 +101,11 @@ valgrind
 python
 python-pip
 python-virtualenv
+python-gobject   # For Python GTK apps
+python-cairo
+python-requests
+gtk3             # GTK3 library
+
 lua
 perl
 ruby
@@ -110,6 +116,16 @@ npm
 go
 rust
 rustup
+
+# -- Code Editors --
+# GUI Editor (Open Source VS Code)
+code  # Code - OSS (official Arch package, telemetry-free)
+
+# Terminal Editors
+neovim  # Modern Vim with better defaults
+vim     # Classic text editor
+nano    # Beginner-friendly editor
+emacs   # Extensible editor
 
 # Version Control
 git
@@ -168,6 +184,8 @@ mesa-utils
 # -- Desktop Environment (XFCE4 Full) --
 xfce4
 xfce4-goodies
+xfce4-whiskermenu-plugin
+xfce4-screensaver
 
 xfce4-terminal
 xfce4-screenshooter
@@ -180,6 +198,17 @@ thunar-archive-plugin
 xarchiver
 mousepad
 ristretto
+
+# -- Essential Applications --
+# Web Browser
+firefox
+
+# Document Viewers
+evince        # PDF/document viewer
+
+# Utilities
+galculator    # Calculator
+gparted       # Partition editor
 
 # -- Display Manager --
 lightdm
@@ -231,6 +260,13 @@ transmission-gtk
 gparted
 bleachbit
 
+# -- System Integration --
+polkit-gnome
+gvfs
+gvfs-mtp
+gvfs-gphoto2
+gvfs-smb
+
 # -- Network Manager GUI --
 network-manager-applet
 nm-connection-editor
@@ -252,3 +288,17 @@ pavucontrol
 
 # -- System Utilities GUI --
 zenity
+
+# -- Boot Tools --
+memtest86+-efi
+
+# -- Plymouth Boot Splash --
+plymouth
+plymouth-theme-spinner
+
+# -- Firmware Packages --
+linux-firmware
+linux-firmware-qlogic
+linux-firmware-bnx2x
+bluez-firmware
+sof-firmware

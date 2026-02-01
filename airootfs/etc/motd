@@ -1,0 +1,24 @@
+╔══════════════════════════════════════════════════════════╗
+║           Welcome to Hunter OS - Live Environment        ║
+╚══════════════════════════════════════════════════════════╝
+
+🔐 Security Features Active:
+   • AppArmor Enabled
+   • UFW Firewall Active  
+   • Fail2Ban Running
+   • SSH Hardened
+
+🤖 AI Assistant Available:
+   Type: ollama run qwen2.5-coder:1.5b
+
+📚 Quick Start:
+   • hunter --help          - View available commands
+   • hunter-welcome         - Launch welcome screen
+   • hunter-monitor         - System monitor
+
+🌐 Network Tools:
+   • nmap, wireshark, metasploit, burpsuite
+
+📖 Documentation: /usr/share/doc/hunter-os/
+🐛 Report Issues: https://github.com/hunter-os/hunter-os/issues
+
