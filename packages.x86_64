@@ -244,8 +244,8 @@ ttf-font-awesome
 ttf-roboto
 
 # -- Themes & Icons --
-arc-gtk-theme
-papirus-icon-theme
+materia-gtk-theme
+adwaita-icon-theme
 
 # -- Audio GUI --
 pavucontrol
