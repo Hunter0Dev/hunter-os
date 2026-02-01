@@ -241,6 +241,11 @@ ttf-liberation
 noto-fonts
 noto-fonts-emoji
 ttf-font-awesome
+ttf-roboto
+
+# -- Themes & Icons --
+arc-gtk-theme
+papirus-icon-theme
 
 # -- Audio GUI --
 pavucontrol

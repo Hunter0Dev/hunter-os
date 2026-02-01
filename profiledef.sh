@@ -35,6 +35,7 @@ file_permissions=(
   ["/etc/skel/Desktop/install-hunter-os.desktop"]="0:0:755"
   ["/etc/skel/Desktop/hunter-monitor.desktop"]="0:0:755"
   ["/etc/sysctl.d/99-hunter-security.conf"]="0:0:644"
+  ["/etc/lightdm/lightdm-gtk-greeter.conf"]="0:0:644"
   ["/etc/ufw"]="0:0:755"
   ["/etc/apparmor.d"]="0:0:755"
   ["/etc/ssh/sshd_config.d"]="0:0:755"
