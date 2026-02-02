@@ -101,10 +101,10 @@ valgrind
 python
 python-pip
 python-virtualenv
-python-gobject   # For Python GTK apps
+python-gobject
 python-cairo
 python-requests
-gtk3             # GTK3 library
+gtk3
 
 lua
 perl
@@ -118,14 +118,11 @@ rust
 rustup
 
 # -- Code Editors --
-# GUI Editor (Open Source VS Code)
-code  # Code - OSS (official Arch package, telemetry-free)
-
-# Terminal Editors
-neovim  # Modern Vim with better defaults
-vim     # Classic text editor
-nano    # Beginner-friendly editor
-emacs   # Extensible editor
+code
+neovim
+vim
+nano
+emacs
 
 # Version Control
 git
@@ -204,11 +201,11 @@ ristretto
 firefox
 
 # Document Viewers
-evince        # PDF/document viewer
+evince
 
 # Utilities
-galculator    # Calculator
-gparted       # Partition editor
+galculator
+gparted
 
 # -- Display Manager --
 lightdm
@@ -293,12 +290,11 @@ zenity
 memtest86+-efi
 
 # -- Plymouth Boot Splash --
+# Note: Plymouth themes are in AUR, base plymouth package only
 plymouth
-plymouth-theme-spinner
 
 # -- Firmware Packages --
 linux-firmware
 linux-firmware-qlogic
 linux-firmware-bnx2x
-bluez-firmware
 sof-firmware
