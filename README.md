@@ -1,4 +1,4 @@
-# HUNTER OS 🛡️
+# HUNTER OS (NOT FULLY READY YET IF YOU ARE SEEING THIS HIT THE STAR) 🛡️
 
 **A Security-Focused, Lightweight Linux Distribution**
 
