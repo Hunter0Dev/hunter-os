@@ -170,10 +170,11 @@ mesa-utils
 
 # -- Desktop Environment (KDE Plasma 6) --
 # Note: plasma-wayland-session was removed in Plasma 6.
-# Wayland support is now built into kwin (dep of plasma-desktop).
+# Wayland support is now provided by wayland + kwin (dep of plasma-desktop).
 plasma-desktop
 plasma-workspace
-kwayland-integration
+wayland
+wayland-protocols
 plasma-pa
 plasma-nm
 plasma-systemmonitor
