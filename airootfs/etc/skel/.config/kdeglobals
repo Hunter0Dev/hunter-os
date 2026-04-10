@@ -1,0 +1,36 @@
+[General]
+ColorScheme=BreezeDark
+Name=Breeze Dark
+TerminalApplication=konsole
+TerminalService=org.kde.konsole.desktop
+BrowserApplication=firefox.desktop
+fixed=JetBrains Mono,10,-1,5,50,0,0,0,0,0
+font=Noto Sans,10,-1,5,50,0,0,0,0,0
+menuFont=Noto Sans,10,-1,5,50,0,0,0,0,0
+smallestReadableFont=Noto Sans,8,-1,5,50,0,0,0,0,0
+toolBarFont=Noto Sans,9,-1,5,50,0,0,0,0,0
+activeFont=Noto Sans,10,-1,5,63,0,0,0,0,0
+
+[KDE]
+AnimationDurationFactor=0.5
+LookAndFeelPackage=org.kde.breezedark.desktop
+ShowDeleteCommand=false
+SingleClick=false
+widgetStyle=kvantum-dark
+
+[Icons]
+Theme=breeze-dark
+
+[KFileDialog Settings]
+Allow Expansion=false
+Automatically select filename extension=true
+Speedbar IsHidden=false
+View Style=DetailTree
+
+[WM]
+activeBackground=49,54,59
+activeBlend=252,252,252
+activeForeground=252,252,252
+inactiveBackground=42,46,50
+inactiveBlend=161,169,177
+inactiveForeground=161,169,177

@@ -1,3 +1,26 @@
-* text=auto
+# Force LF line endings for ALL text files — prevents Windows CRLF corruption
+* text=auto eol=lf
+
+# Shell scripts — must be LF or they fail with "bad interpreter" on Linux
 *.sh text eol=lf
+
+# Config files
 *.conf text eol=lf
+*.cfg text eol=lf
+
+# GitHub Actions workflows
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Desktop entries and docs
+*.desktop text eol=lf
+*.md text eol=lf
+
+# Explicitly binary — no conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.gz binary
+*.zst binary
+*.tar binary

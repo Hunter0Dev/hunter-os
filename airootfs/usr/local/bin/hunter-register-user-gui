@@ -7,8 +7,6 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
-# Launch terminal with the registration script
-xfce4-terminal --title="Hunter OS - User Registration" \
-               --geometry=80x24 \
-               --hold \
-               --execute sudo hunter-register-user
+# Launch Konsole (KDE terminal) with the registration script
+konsole --title "Hunter OS - User Registration" \
+        -e sudo hunter-register-user

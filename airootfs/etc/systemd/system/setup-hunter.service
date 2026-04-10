@@ -5,7 +5,7 @@ ConditionPathExists=!/var/lib/hunter-setup-done
 
 [Service]
 Type=oneshot
-ExecStart=/root/.automated_script.sh
+ExecStart=/usr/local/bin/hunter-first-boot.sh
 ExecStartPost=/usr/bin/touch /var/lib/hunter-setup-done
 RemainAfterExit=yes
 

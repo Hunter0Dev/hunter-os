@@ -2,9 +2,9 @@
 Version=1.0
 Type=Application
 Name=Install Hunter OS
-Comment=Install Hunter OS to your hard drive
-Exec=sudo hunter-install
+Comment=Install Hunter OS to your hard drive using Calamares
+Exec=pkexec calamares
 Icon=system-software-install
 Terminal=false
 Categories=System;Settings;
-Keywords=install;installer;setup;
+Keywords=install;installer;setup;calamares;

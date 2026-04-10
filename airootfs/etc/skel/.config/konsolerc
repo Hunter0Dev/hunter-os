@@ -1,0 +1,10 @@
+[Appearance]
+ColorScheme=Breeze Dark
+Font=JetBrains Mono,11,-1,5,50,0,0,0,0,0,Regular
+
+[Desktop Entry]
+DefaultProfile=Hunter.profile
+
+[MainWindow]
+MenuBar=Disabled
+ToolBarsMovable=Disabled

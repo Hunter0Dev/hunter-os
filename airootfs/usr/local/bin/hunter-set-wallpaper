@@ -1,35 +1,29 @@
 #!/bin/bash
-# Set Hunter OS wallpaper for all users with proper scaling
+# Set Hunter OS wallpaper for KDE Plasma
 
-WALLPAPER_PATH="/usr/share/backgrounds/hunter-os.png"
+WALLPAPER_DARK="/usr/share/backgrounds/hunter-os-dark.png"
+WALLPAPER_DEFAULT="/usr/share/backgrounds/hunter-os.png"
 
-# Set wallpaper for XFCE with proper scaling
-if command -v xfconf-query &> /dev/null; then
-    # Set for all monitors with zoomed/scaled mode
-    for monitor in $(xfconf-query -c xfce4-desktop -l | grep last-image); do
-        xfconf-query -c xfce4-desktop -p "$monitor" -s "$WALLPAPER_PATH"
-        
-        # Set image style to "Zoomed" (5) for proper scaling on all screens
-        # 0=Auto, 1=Centered, 2=Tiled, 3=Stretched, 4=Scaled, 5=Zoomed
-        style_prop="${monitor/last-image/image-style}"
-        xfconf-query -c xfce4-desktop -p "$style_prop" -s 5 2>/dev/null || true
-    done
-    
-    # Fallback: Set for default monitor with zoomed mode
-    xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/workspace0/last-image -s "$WALLPAPER_PATH" 2>/dev/null || true
-    xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/workspace0/image-style -s 5 2>/dev/null || true
-    
-    # Also set for monitorVGA1, HDMI1, etc. (common monitor names)
-    for monitor_name in monitor0 monitorVGA1 monitorHDMI1 monitorDP1 monitoreDP1 monitorLVDS1; do
-        xfconf-query -c xfce4-desktop -p /backdrop/screen0/${monitor_name}/workspace0/last-image -s "$WALLPAPER_PATH" 2>/dev/null || true
-        xfconf-query -c xfce4-desktop -p /backdrop/screen0/${monitor_name}/workspace0/image-style -s 5 2>/dev/null || true
-    done
+# Determine which wallpaper to use
+if [ -f "$WALLPAPER_DARK" ]; then
+    WALLPAPER_PATH="$WALLPAPER_DARK"
+elif [ -f "$WALLPAPER_DEFAULT" ]; then
+    WALLPAPER_PATH="$WALLPAPER_DEFAULT"
+else
+    echo "No Hunter OS wallpaper found."
+    exit 1
 fi
 
-# Set for LightDM greeter (login screen)
-if [ -f /etc/lightdm/lightdm-gtk-greeter.conf ]; then
-    sed -i "s|^#\?background=.*|background=$WALLPAPER_PATH|" /etc/lightdm/lightdm-gtk-greeter.conf
+# Set wallpaper for KDE Plasma
+if command -v plasma-apply-wallpaperimage &> /dev/null; then
+    plasma-apply-wallpaperimage "$WALLPAPER_PATH" 2>/dev/null || true
+    echo "✓ KDE Plasma wallpaper set"
+fi
+
+# Set wallpaper for SDDM login screen
+if [ -f /etc/sddm.conf.d/hunter.conf ]; then
+    echo "✓ SDDM uses theme wallpaper"
 fi
 
 echo "Hunter OS wallpaper set successfully!"
-echo "Wallpaper will scale properly on all screen sizes."
+echo "Wallpaper: $WALLPAPER_PATH"

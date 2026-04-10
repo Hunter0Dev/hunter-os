@@ -7,15 +7,25 @@ _hunter_completion() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     
-    # Main hunter commands
-    opts="--help --version update search install remove list"
+    # Main hunter commands (matching actual hunter CLI commands)
+    opts="install remove update search clean audit harden firewall status --help"
     
     case "${prev}" in
         hunter)
             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
             return 0
             ;;
-        search|install|remove)
+        install)
+            local install_opts="dev-c dev-node dev-rust"
+            COMPREPLY=( $(compgen -W "${install_opts}" -- ${cur}) )
+            return 0
+            ;;
+        firewall)
+            local fw_opts="status enable disable"
+            COMPREPLY=( $(compgen -W "${fw_opts}" -- ${cur}) )
+            return 0
+            ;;
+        search|remove)
             # Could add tool name completion here
             return 0
             ;;
@@ -33,10 +43,25 @@ _hunter_get_completion() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     
-    opts="update install remove search list --help"
-    
-    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-    return 0
+    case "${prev}" in
+        hunter-get)
+            opts="install fix --help"
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
+            ;;
+        install)
+            local install_opts="dev-c dev-web dev-python dev-rust gaming security-audit pentest"
+            COMPREPLY=( $(compgen -W "${install_opts}" -- ${cur}) )
+            return 0
+            ;;
+        fix)
+            local fix_opts="wifi bluetooth permissions"
+            COMPREPLY=( $(compgen -W "${fix_opts}" -- ${cur}) )
+            return 0
+            ;;
+        *)
+            ;;
+    esac
 }
 
 complete -F _hunter_get_completion hunter-get

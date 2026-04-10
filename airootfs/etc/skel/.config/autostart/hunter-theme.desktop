@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Hunter OS Theme
+Comment=Apply Hunter OS macOS-like theme on first login
+Exec=/usr/local/bin/hunter-apply-theme
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-condition=ksmserver
+OnlyShowIn=KDE;
+Hidden=false

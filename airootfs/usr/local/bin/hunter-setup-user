@@ -1,0 +1,206 @@
+#!/bin/bash
+# Hunter OS - User Account Setup
+# Creates a user account in the live environment
+# NOTE: For full OS installation, use the "Install Hunter OS" app (Calamares)
+
+set -e
+
+# Check if running as root
+if [ "$EUID" -ne 0 ]; then 
+    echo "This must be run with sudo"
+    exit 1
+fi
+
+# ============================================
+# Hardware Detection Functions
+# ============================================
+
+get_total_ram_mb() {
+    grep MemTotal /proc/meminfo | awk '{print int($2/1024)}'
+}
+
+get_cpu_cores() {
+    nproc
+}
+
+get_cpu_model() {
+    grep "model name" /proc/cpuinfo | head -n1 | cut -d: -f2 | xargs
+}
+
+detect_hardware_profile() {
+    local ram_mb=$(get_total_ram_mb)
+    
+    if [ "$ram_mb" -le 2048 ]; then
+        echo "lite"
+    elif [ "$ram_mb" -le 4096 ]; then
+        echo "standard"
+    else
+        echo "full"
+    fi
+}
+
+get_profile_description() {
+    local profile="$1"
+    case "$profile" in
+        "lite") echo "Lightweight (optimized for 2GB RAM)" ;;
+        "standard") echo "Standard (balanced for 4GB RAM)" ;;
+        "full") echo "Full (all features for 8GB+ RAM)" ;;
+    esac
+}
+
+# ============================================
+# Welcome and Hardware Detection
+# ============================================
+
+RAM_MB=$(get_total_ram_mb)
+CPU_CORES=$(get_cpu_cores)
+CPU_MODEL=$(get_cpu_model)
+PROFILE=$(detect_hardware_profile)
+PROFILE_DESC=$(get_profile_description "$PROFILE")
+
+# Welcome message
+zenity --question \
+    --title="Hunter OS - Create User Account" \
+    --width=550 \
+    --text="<big><b>Create Your User Account</b></big>\n\n\
+<b>Detected Hardware:</b>\n\
+• RAM: ${RAM_MB} MB\n\
+• CPU: $CPU_MODEL\n\
+• Cores: $CPU_CORES\n\n\
+<b>Recommended Profile:</b> $PROFILE_DESC\n\n\
+This will create a personal user account on this system.\n\n\
+<b>NOTE:</b> To install Hunter OS to your hard drive permanently,\n\
+use the <b>Install Hunter OS</b> app on the desktop instead.\n\n\
+Continue with user account creation?" \
+    --ok-label="Create Account" \
+    --cancel-label="Cancel"
+
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+# ============================================
+# User Account Creation
+# ============================================
+
+# Get username
+USERNAME=$(zenity --entry \
+    --title="Create Your Account" \
+    --text="Enter your username (lowercase, no spaces):" \
+    --width=400)
+
+if [ -z "$USERNAME" ]; then
+    zenity --error --text="Username cannot be empty"
+    exit 1
+fi
+
+# Validate username
+if [[ ! "$USERNAME" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
+    zenity --error --text="Invalid username. Use only lowercase letters, numbers, underscore, and hyphen."
+    exit 1
+fi
+
+# Get password
+PASSWORD=$(zenity --password \
+    --title="Create Your Account" \
+    --text="Enter password for $USERNAME:")
+
+if [ -z "$PASSWORD" ]; then
+    zenity --error --text="Password cannot be empty"
+    exit 1
+fi
+
+# Confirm password
+PASSWORD2=$(zenity --password \
+    --title="Create Your Account" \
+    --text="Confirm password:")
+
+if [ "$PASSWORD" != "$PASSWORD2" ]; then
+    zenity --error --text="Passwords do not match!"
+    exit 1
+fi
+
+# Get full name
+FULLNAME=$(zenity --entry \
+    --title="Create Your Account" \
+    --text="Enter your full name (optional):" \
+    --width=400)
+
+# ============================================
+# Account Setup
+# ============================================
+
+(
+echo "10" ; echo "# Creating user account..."
+# Create user
+if [ -n "$FULLNAME" ]; then
+    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash -c "$FULLNAME" "$USERNAME"
+else
+    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash "$USERNAME"
+fi
+echo "$USERNAME:$PASSWORD" | chpasswd
+
+# Set up proper sudo (with password required)
+echo "$USERNAME ALL=(ALL) ALL" > /etc/sudoers.d/"$USERNAME"
+chmod 440 /etc/sudoers.d/"$USERNAME"
+
+echo "30" ; echo "# Setting up home directory..."
+mkdir -p "/home/$USERNAME"/{Documents,Downloads,Pictures,Videos,Music}
+cp -r /etc/skel/. "/home/$USERNAME/"
+chown -R "$USERNAME:$USERNAME" "/home/$USERNAME"
+
+echo "60" ; echo "# Optimizing for your hardware..."
+# Remove heavy apps if lite profile
+if [ "$PROFILE" = "lite" ]; then
+    for app in libreoffice-fresh gimp inkscape thunderbird audacity; do
+        pacman -Rns --noconfirm "$app" 2>/dev/null || true
+    done
+fi
+
+echo "80" ; echo "# Configuring display manager..."
+# Disable auto-login for security
+if [ -f /etc/sddm.conf.d/hunter.conf ]; then
+    sed -i 's/^User=hunter/#User=hunter/' /etc/sddm.conf.d/hunter.conf
+fi
+
+# Hide hunter live user from login screen
+mkdir -p /var/lib/AccountsService/users
+cat > /var/lib/AccountsService/users/hunter << 'EOFACCOUNT'
+[User]
+SystemAccount=true
+EOFACCOUNT
+
+echo "90" ; echo "# Creating swap file..."
+if [ ! -f /swapfile ]; then
+    fallocate -l 2G /swapfile 2>/dev/null || dd if=/dev/zero of=/swapfile bs=1M count=2048
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo "/swapfile none swap sw 0 0" >> /etc/fstab
+fi
+
+echo "100" ; echo "# Account created!"
+) | zenity --progress \
+    --title="Creating Account" \
+    --text="Preparing..." \
+    --percentage=0 \
+    --auto-close
+
+# ============================================
+# Success Message
+# ============================================
+
+zenity --info \
+    --title="Account Created" \
+    --width=450 \
+    --text="<b>Your account has been created!</b>\n\n\
+<b>Username:</b> $USERNAME\n\
+<b>Profile:</b> $PROFILE_DESC\n\n\
+<b>Note:</b>\n\
+• You can now log in with your account\n\
+• Sudo requires your password (more secure)\n\
+• To install Hunter OS permanently, use the\n\
+  <b>Install Hunter OS</b> desktop shortcut\n\n\
+Please log out and log back in with your new account."
+
+echo "Account created: $USERNAME ($PROFILE)"

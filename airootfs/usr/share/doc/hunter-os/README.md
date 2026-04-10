@@ -1,131 +1,109 @@
 # Hunter OS
 
-**Version**: 1.0  
-**Type**: Live Cybersecurity Platform  
+**Version**: 1.0 (Aegis)
+**Type**: Security-Focused Linux Distribution
 **Based on**: Arch Linux
+**Desktop**: KDE Plasma 6
 
 ## Overview
 
-Hunter OS is a specialized Linux distribution designed for cybersecurity professionals, penetration testers, and security researchers. Built on Arch Linux, it provides a comprehensive suite of security tools in a live environment.
+Hunter OS is a security-focused Linux distribution built on Arch Linux with a polished macOS-like KDE Plasma 6 desktop. It provides a hardened, professional environment for developers, security researchers, and power users.
 
 ## Key Features
 
-### 🔐 Security Tools
-- **Network Analysis**: nmap, wireshark, tcpdump, netcat
-- **Web Security**: burpsuite, sqlmap, nikto, dirb
-- **Exploitation**: metasploit, beef, social-engineer-toolkit
-- **Password Cracking**: john, hashcat, hydra
-- **Wireless**: aircrack-ng, reaver, wifite
-- **Forensics**: autopsy, volatility, sleuthkit
-
-### 🤖 AI Assistant
-- **Qwen2.5-Coder 1.5B** - Offline coding assistant
-- Helps with code generation, debugging, and security analysis
-- Access via: `ollama run qwen2.5-coder:1.5b`
-
 ### 🖥️ Desktop Environment
-- **XFCE4** - Lightweight and customizable
-- **Materia-dark** theme
-- **Adwaita** icons
-- **Roboto** font
+- **KDE Plasma 6** — Modern, polished desktop with macOS-like layout
+- **Global Menu Bar** — App menus in the top panel
+- **Floating Dock** — Quick launch bar with pinned applications
+- **Dark Theme** — Breeze Dark across all applications
+- **4 Virtual Desktops** — Like macOS Spaces
+- **Wayland** — Modern display protocol (X11 fallback available)
 
-### 🛡️ Security Features
-- **AppArmor** - Mandatory access control
-- **UFW** - Uncomplicated firewall
-- **Fail2Ban** - Intrusion prevention
-- **SSH Hardening** - Secure remote access
-- **Kernel Security** - Hardened parameters
+### 🔐 Security Features
+- **AppArmor** — Mandatory access control
+- **UFW** — Uncomplicated firewall (deny incoming, allow outgoing)
+- **Fail2Ban** — Intrusion prevention (SSH brute-force protection)
+- **SSH Hardening** — Key-only auth, no root login, strong ciphers
+- **Kernel Hardening** — ASLR, ptrace restriction, SYN cookies
+
+### 🛠️ Network & Security Tools
+- **nmap** — Network scanner
+- **traceroute** — Route tracing
+- **whois** — Domain lookup
+- **bind-tools** — DNS utilities
+- **lynis** — Security auditing
+- **rkhunter** — Rootkit detection
 
 ### 📦 Development Tools
-- **Languages**: Python, Rust, Go, Node.js, C/C++
+- **Languages**: Python, Rust (rustup), Go, Node.js, C/C++
 - **Compilers**: GCC, Clang
+- **Editors**: VS Code, Kate
 - **Version Control**: Git, GitHub CLI
 - **Build Tools**: CMake, Make
 
+### 🤖 AI Assistant (Optional)
+- Install via: `hunter-ai-gui` or manually with Ollama
+- **Qwen2.5-Coder 1.5B** — Offline coding assistant
+
 ## Quick Start
 
-### Boot Options
-- **Normal Boot**: Standard live environment
-- **Copy to RAM**: Faster performance, requires more RAM
-- **Safe Mode**: Disable graphics acceleration
-- **Emergency Shell**: Recovery mode
-
-### First Steps
-1. Log in with default credentials (shown on screen)
-2. Launch **Hunter Welcome Screen** from desktop
-3. Configure network (WiFi/Ethernet)
-4. Start exploring tools!
-
-### Common Commands
+### Package Management
 ```bash
-# View available Hunter commands
-hunter --help
-
-# Launch system monitor
-hunter-monitor
-
-# Start AI assistant
-ollama run qwen2.5-coder:1.5b
-
-# Update tool database
-hunter-get update
-
-# Install Hunter OS to disk
-hunter-install
+hunter install <package>    # Install software
+hunter remove <package>     # Remove software
+hunter update               # Update system
+hunter search <term>        # Search packages
 ```
 
-## Network Configuration
+### Security Commands
+```bash
+hunter audit                # Run comprehensive security audit
+hunter status               # Check security service status
+hunter firewall status      # Firewall status
+hunter firewall enable      # Enable firewall
+hunter harden               # Reload kernel security parameters
+```
 
-### WiFi
-- Click NetworkManager icon in system tray
-- Select your network
-- Enter password
+### Development Environments
+```bash
+hunter install dev-c        # C/C++ (GCC, CMake, GDB)
+hunter install dev-node     # Node.js & NPM
+hunter install dev-rust     # Rust via rustup
+```
 
-### Ethernet
-- Plug in cable
-- Automatic DHCP configuration
+### Advanced Tools
+```bash
+hunter-get install security-audit   # Lynis, rkhunter
+hunter-get install pentest          # nmap, wireshark, tcpdump
+hunter-get fix wifi                 # Reset network adapter
+hunter-get fix bluetooth            # Reset bluetooth
+```
 
-## Tools Organization
+## Default Credentials (Live Environment)
+- **Username**: hunter
+- **Password**: hunter
 
-Tools are organized by category in the application menu:
-- **Information Gathering**
-- **Vulnerability Analysis**
-- **Web Application Analysis**
-- **Password Attacks**
-- **Wireless Attacks**
-- **Exploitation Tools**
-- **Forensics**
-- **Reverse Engineering**
+## Installing to Disk
+Use the **Install Hunter OS** shortcut on the desktop, or search for "Install" in the application menu. This launches the Calamares installer.
 
 ## System Requirements
 
 ### Minimum
 - **CPU**: 64-bit processor
-- **RAM**: 4 GB
-- **Storage**: 8 GB USB drive or DVD
+- **RAM**: 3 GB
+- **Storage**: 10 GB
 - **Graphics**: 1024x768 resolution
 
 ### Recommended
 - **CPU**: Multi-core 64-bit processor
 - **RAM**: 8 GB or more
-- **Storage**: 16 GB+ USB drive
+- **Storage**: 20 GB+
 - **Graphics**: 1920x1080 resolution
-- **Network**: WiFi adapter with monitor mode support
-
-## Persistence (Optional)
-
-To save changes between reboots:
-1. Create a persistent partition on USB
-2. Label it `persistence`
-3. Create `persistence.conf` file
-4. Reboot with persistence enabled
 
 ## Support
 
-- **Documentation**: `/usr/share/doc/hunter-os/`
 - **GitHub**: https://github.com/hunter-os/hunter-os
 - **Issues**: https://github.com/hunter-os/hunter-os/issues
-- **Community**: https://discord.gg/hunter-os
 
 ## License
 
@@ -134,16 +112,12 @@ Hunter OS is free and open-source software. Individual tools have their own lice
 ## Credits
 
 Built with:
-- **Arch Linux** - Base system
-- **archiso** - ISO building framework
-- **XFCE** - Desktop environment
-- **ollama** - AI assistant platform
-- **Qwen2.5-Coder** - AI model
-
-## Disclaimer
-
-Hunter OS is designed for legal security testing and educational purposes only. Users are responsible for complying with all applicable laws and regulations. Unauthorized access to computer systems is illegal.
+- **Arch Linux** — Base system
+- **archiso** — ISO building framework
+- **KDE Plasma 6** — Desktop environment
+- **Calamares** — System installer
+- **Ollama** — AI assistant platform (optional)
 
 ---
 
-**Hunter OS** - Empowering Security Professionals
+**Hunter OS** — Security-Focused. Developer-Ready.

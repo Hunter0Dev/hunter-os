@@ -33,9 +33,9 @@ docker run --privileged --rm -v "$(pwd):/hunter-os" hunter-builder /bin/bash -c 
     # CRITICAL: Set graphical.target as default (this is what makes GUI boot)
     ln -sf /usr/lib/systemd/system/graphical.target \"\$SYSTEMD_DIR/default.target\"
 
-    # Enable Display Manager in graphical.target (NOT multi-user.target)
-    ln -sf /usr/lib/systemd/system/lightdm.service \"\$SYSTEMD_DIR/graphical.target.wants/lightdm.service\"
-    ln -sf /usr/lib/systemd/system/lightdm.service \"\$SYSTEMD_DIR/display-manager.service\"
+    # Enable Display Manager (SDDM for KDE Plasma)
+    ln -sf /usr/lib/systemd/system/sddm.service \"\$SYSTEMD_DIR/graphical.target.wants/sddm.service\"
+    ln -sf /usr/lib/systemd/system/sddm.service \"\$SYSTEMD_DIR/display-manager.service\"
 
     # Enable Network Manager
     ln -sf /usr/lib/systemd/system/NetworkManager.service \"\$SYSTEMD_DIR/multi-user.target.wants/NetworkManager.service\"
@@ -44,7 +44,6 @@ docker run --privileged --rm -v "$(pwd):/hunter-os" hunter-builder /bin/bash -c 
     ln -sf /usr/lib/systemd/system/ufw.service \"\$SYSTEMD_DIR/multi-user.target.wants/ufw.service\" 2>/dev/null || true
     ln -sf /usr/lib/systemd/system/fail2ban.service \"\$SYSTEMD_DIR/multi-user.target.wants/fail2ban.service\" 2>/dev/null || true
     ln -sf /usr/lib/systemd/system/apparmor.service \"\$SYSTEMD_DIR/multi-user.target.wants/apparmor.service\" 2>/dev/null || true
-    ln -sf /usr/lib/systemd/system/sshd.service \"\$SYSTEMD_DIR/multi-user.target.wants/sshd.service\" 2>/dev/null || true
 
     # Enable Virtualization Services (will fail gracefully if not in VM)
     ln -sf /usr/lib/systemd/system/vboxservice.service \"\$SYSTEMD_DIR/multi-user.target.wants/vboxservice.service\" 2>/dev/null || true

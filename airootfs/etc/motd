@@ -9,15 +9,15 @@
    • SSH Hardened
 
 🤖 AI Assistant Available:
-   Type: ollama run qwen2.5-coder:1.5b
+   Type: hunter-ai-gui (or install Ollama manually)
 
 📚 Quick Start:
    • hunter --help          - View available commands
    • hunter-welcome         - Launch welcome screen
-   • hunter-monitor         - System monitor
+   • plasma-systemmonitor   - System monitor
 
 🌐 Network Tools:
-   • nmap, wireshark, metasploit, burpsuite
+   • nmap, traceroute, whois, bind-tools
 
 📖 Documentation: /usr/share/doc/hunter-os/
 🐛 Report Issues: https://github.com/hunter-os/hunter-os/issues

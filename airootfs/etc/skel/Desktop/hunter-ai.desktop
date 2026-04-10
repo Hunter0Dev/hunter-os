@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=Hunter AI Assistant
-Comment=AI coding assistant powered by Qwen2.5-Coder
+Comment=AI coding assistant (requires Ollama)
 Exec=hunter-ai-gui
 Icon=applications-science
 Terminal=false

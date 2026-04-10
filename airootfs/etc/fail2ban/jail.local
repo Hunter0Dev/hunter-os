@@ -9,6 +9,9 @@ bantime = 3600
 findtime = 600
 maxretry = 5
 
+# Use systemd journal backend (Arch Linux uses systemd, not /var/log/auth.log)
+backend = systemd
+
 # Destination email for alerts
 destemail = root@localhost
 sender = fail2ban@hunter-os
@@ -23,7 +26,7 @@ ignoreip = 127.0.0.1/8 ::1
 enabled = true
 port = ssh
 filter = sshd
-logpath = /var/log/auth.log
+backend = systemd
 maxretry = 3
 bantime = 7200
 
@@ -31,6 +34,6 @@ bantime = 7200
 enabled = true
 port = ssh
 filter = sshd-ddos
-logpath = /var/log/auth.log
+backend = systemd
 maxretry = 2
 bantime = 7200

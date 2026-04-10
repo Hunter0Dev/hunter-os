@@ -1,0 +1,44 @@
+[Windows]
+BorderlessMaximizedWindows=true
+Placement=Centered
+
+[Desktops]
+Id_1=desktop-1
+Id_2=desktop-2
+Id_3=desktop-3
+Id_4=desktop-4
+Number=4
+Rows=2
+Name_1=Desktop 1
+Name_2=Desktop 2
+Name_3=Desktop 3
+Name_4=Desktop 4
+
+[Compositing]
+Backend=OpenGL
+GLCore=true
+AnimationSpeed=3
+Enabled=true
+HiddenPreviews=5
+
+[Effect-blur]
+BlurStrength=8
+NoiseStrength=0
+
+[Effect-overview]
+BorderActivate=9
+
+[Effect-translucency]
+Inactive=90
+
+[org.kde.kdecoration2]
+ButtonsOnLeft=XIA
+ButtonsOnRight=
+library=org.kde.breeze
+theme=Breeze
+
+[TabBox]
+LayoutName=thumbnail_grid
+
+[MouseBindings]
+CommandAllKey=Meta

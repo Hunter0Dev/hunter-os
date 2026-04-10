@@ -1,5 +1,6 @@
 # ============================================
 # HUNTER OS - Package List (Security-Focused)
+# KDE Plasma 6 / macOS-like Desktop
 # ============================================
 
 # -- Base System --
@@ -39,6 +40,7 @@ ntfs-3g
 sudo
 vim
 neovim
+nano
 git
 man-db
 man-pages
@@ -47,7 +49,6 @@ wget
 curl
 rsync
 tmux
-screen
 
 # -- Network & Connectivity --
 networkmanager
@@ -114,18 +115,12 @@ ruby
 nodejs
 npm
 go
-rust
 rustup
 
 # -- Code Editors --
 code
-neovim
-vim
-nano
-emacs
 
 # Version Control
-git
 github-cli
 
 # -- Compression & Archives --
@@ -138,17 +133,14 @@ bzip2
 xz
 
 # -- Display Server & Xorg Utils --
-xorg
 xorg-server
 xorg-xinit
 xorg-xinput
 xorg-xrandr
 xorg-xrdb
-xterm
-xorg-twm
-xorg-xclock
+xorg-xwayland
 
-# -- GPU Drivers (The "Everything" List) --
+# -- GPU Drivers --
 # Intel
 xf86-video-intel
 vulkan-intel
@@ -161,10 +153,8 @@ xf86-video-ati
 vulkan-radeon
 libva-mesa-driver
 
-# Nvidia (Open Source & Proprietary utils)
+# Nvidia (Open Source)
 xf86-video-nouveau
-# nvidia-open-dkms # Note: Proprietary drivers can be tricky in live ISOs implies kernel headers match exactly. Using nouveau/open is safer for generic ISO.
-nvidia-utils
 
 # VM / Virtualization Drivers (CRITICAL for VirtualBox/VMware/QEMU)
 xf86-video-qxl
@@ -178,75 +168,62 @@ xf86-video-fbdev
 mesa
 mesa-utils
 
-# -- Desktop Environment (XFCE4 Full) --
-xfce4
-xfce4-goodies
-xfce4-whiskermenu-plugin
-xfce4-screensaver
-
-xfce4-terminal
-xfce4-screenshooter
-xfce4-taskmanager
-xfce4-notifyd
-xfce4-power-manager
-thunar
-thunar-volman
-thunar-archive-plugin
-xarchiver
-mousepad
-ristretto
+# -- Desktop Environment (KDE Plasma 6) --
+plasma-desktop
+plasma-wayland-session
+plasma-pa
+plasma-nm
+plasma-systemmonitor
+plasma-firewall
+kde-gtk-config
+sddm
+sddm-kcm
+konsole
+dolphin
+dolphin-plugins
+ark
+spectacle
+gwenview
+okular
+kate
+kcalc
+kscreen
+powerdevil
+bluedevil
+breeze
+breeze-gtk
+kvantum
+xdg-desktop-portal-kde
+phonon-qt6-vlc
+ffmpegthumbs
+kdegraphics-thumbnailers
 
 # -- Essential Applications --
 # Web Browser
 firefox
 
-# Document Viewers
-evince
-
 # Utilities
-galculator
 gparted
 
-# -- Display Manager --
-lightdm
-lightdm-gtk-greeter
-lightdm-gtk-greeter-settings
-
 # -- GUI Applications --
-firefox
 vlc
 gimp
 inkscape
-evince
-xarchiver
 file-roller
-ristretto
-mousepad
-
-# -- Package Manager GUI --
-# Note: pamac-aur will be installed on first boot via automated script
-# No GUI package manager in base install (pamac and octopi are both AUR packages)
 
 # -- Productivity Suite --
-# Note: onlyoffice-bin is from AUR, will be installed post-boot
-# Using LibreOffice as fallback for now
 libreoffice-fresh
 hunspell
 hunspell-en_us
 
 # -- Media Applications --
-vlc
 rhythmbox
 audacity
 
 # -- Document Viewers --
-evince
-zathura
-zathura-pdf-mupdf
+# (okular already included in KDE packages above)
 
 # -- Graphics & Design --
-gimp
-inkscape
 imagemagick
 
 # -- Communication --
@@ -254,19 +231,14 @@ thunderbird
 
 # -- Utilities --
 transmission-gtk
-gparted
 bleachbit
 
 # -- System Integration --
-polkit-gnome
+polkit-kde-agent
 gvfs
 gvfs-mtp
 gvfs-gphoto2
 gvfs-smb
-
-# -- Network Manager GUI --
-network-manager-applet
-nm-connection-editor
 
 # -- Fonts --
 ttf-dejavu
@@ -275,6 +247,7 @@ noto-fonts
 noto-fonts-emoji
 ttf-font-awesome
 ttf-roboto
+ttf-jetbrains-mono
 
 # -- Themes & Icons --
 materia-gtk-theme
@@ -290,11 +263,4 @@ zenity
 memtest86+-efi
 
 # -- Plymouth Boot Splash --
-# Note: Plymouth themes are in AUR, base plymouth package only
 plymouth
-
-# -- Firmware Packages --
-linux-firmware
-linux-firmware-qlogic
-linux-firmware-bnx2x
-sof-firmware

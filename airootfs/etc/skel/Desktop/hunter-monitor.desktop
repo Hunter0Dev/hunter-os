@@ -2,10 +2,10 @@
 Version=1.0
 Type=Application
 Name=Hunter System Monitor
-Comment=Monitor system resources and processes (like Windows Task Manager)
-Exec=hunter-monitor
+Comment=Monitor system resources and processes
+Exec=plasma-systemmonitor
 Icon=utilities-system-monitor
 Terminal=false
-Categories=System;Monitor;GTK;
+Categories=System;Monitor;KDE;
 Keywords=system;process;task;manager;cpu;memory;performance;
 StartupNotify=true

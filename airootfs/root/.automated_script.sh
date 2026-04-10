@@ -34,8 +34,8 @@ echo ">>> Enabling system services..."
 # Set graphical target as default (CRITICAL for GUI boot)
 systemctl set-default graphical.target
 
-# Enable Display Manager
-systemctl enable lightdm
+# Enable Display Manager (SDDM for KDE Plasma)
+systemctl enable sddm
 
 # Enable Network and Bluetooth
 systemctl enable NetworkManager
@@ -45,7 +45,8 @@ systemctl enable bluetooth
 systemctl enable apparmor
 systemctl enable ufw
 systemctl enable fail2ban
-systemctl enable sshd
+# Note: SSH is NOT auto-enabled for security. Users can start it with:
+# sudo systemctl start sshd
 
 # ============================================
 # AppArmor Configuration
@@ -164,9 +165,8 @@ chmod 700 /root
 chmod 755 /usr/local/bin/hunter
 chmod 755 /usr/local/bin/hunter-get
 
-# Restrict /proc and /sys access
-chmod 550 /proc 2>/dev/null || true
-chmod 550 /sys 2>/dev/null || true
+# Note: Do NOT chmod 550 /proc or /sys — this breaks many tools
+# including systemctl, top, htop, and most system monitoring utilities.
 
 # Create security directories
 mkdir -p /var/log/audit
@@ -181,6 +181,8 @@ echo ">>> Configuring users..."
 if ! id -u hunter &>/dev/null; then
     useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash hunter
     echo "hunter:hunter" | chpasswd
+    # NOPASSWD sudo for live environment only
+    # After installation, the installer will create a proper user with password-based sudo
     echo "hunter ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/hunter
     chmod 440 /etc/sudoers.d/hunter
 fi
@@ -200,47 +202,25 @@ if command -v pacman &> /dev/null; then
 fi
 
 # ============================================
-# Display Manager Configuration
+# Display Manager Configuration (SDDM for KDE)
 # ============================================
-echo ">>> Configuring display manager..."
-if command -v lightdm &> /dev/null; then
-    systemctl enable lightdm
-    
-    # Configure LightDM for Live Environment (Ubuntu-style)
-    # Auto-login for testing, account creation only during installation
-    mkdir -p /etc/lightdm
-    cat > /etc/lightdm/lightdm.conf << 'EOF'
-[Seat:*]
-# Auto-login for live environment (testing mode)
-autologin-user=hunter
-autologin-user-timeout=0
-autologin-session=xfce
+echo ">>> Configuring SDDM display manager..."
+if command -v sddm &> /dev/null; then
+    systemctl enable sddm
 
-# Session configuration
-user-session=xfce
-greeter-session=lightdm-gtk-greeter
-greeter-hide-users=false
-allow-guest=false
+    # Create SDDM configuration for auto-login in live environment
+    mkdir -p /etc/sddm.conf.d
+    cat > /etc/sddm.conf.d/hunter.conf << 'EOF'
+[Autologin]
+User=hunter
+Session=plasma
 
-# Show manual login option (for after installation)
-greeter-show-manual-login=true
-greeter-show-remote-login=false
+[Theme]
+Current=hunter
+
+[General]
+InputMethod=
 EOF
-
-    # Configure LightDM greeter
-    cat > /etc/lightdm/lightdm-gtk-greeter.conf << 'EOF'
-[greeter]
-theme-name=Adwaita-dark
-icon-theme-name=Adwaita
-font-name=Sans 10
-background=#1a1a1a
-
-# Show indicators
-indicators=~host;~spacer;~clock;~spacer;~session;~a11y;~power
-EOF
-    
-    # Don't hide hunter user in live environment
-    # (It will be hidden after installation when real users are created)
 fi
 
 # ============================================
@@ -256,38 +236,27 @@ else
 fi
 
 # ============================================
-# Set Hunter OS Wallpaper
+# Apply KDE Theme on First Login
 # ============================================
-echo ">>> Setting Hunter OS wallpaper..."
-if [ -f /usr/local/bin/hunter-set-wallpaper ]; then
-    chmod +x /usr/local/bin/hunter-set-wallpaper
-    /usr/local/bin/hunter-set-wallpaper
+echo ">>> Configuring KDE Plasma theme..."
+if [ -f /usr/local/bin/hunter-apply-theme ]; then
+    chmod +x /usr/local/bin/hunter-apply-theme
 fi
 
 # ============================================
-# Build Hunter System Monitor (Rust)
+# Plymouth Boot Splash Configuration
 # ============================================
-echo ">>> Building Hunter System Monitor..."
-if [ -d /hunter-system-monitor ]; then
-    cd /hunter-system-monitor
+echo ">>> Configuring Plymouth boot splash..."
+
+if command -v plymouth-set-default-theme &> /dev/null; then
+    # Set spinner theme
+    plymouth-set-default-theme -R spinner
     
-    # Install Rust if not present
-    if ! command -v cargo &> /dev/null; then
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
-        source "$HOME/.cargo/env"
-    fi
+    # Note: initramfs was already built above, no duplicate mkinitcpio -P call needed
     
-    # Build release binary
-    cargo build --release
-    
-    # Install binary
-    cp target/release/hunter-monitor /usr/local/bin/
-    chmod +x /usr/local/bin/hunter-monitor
-    
-    # Clean up build artifacts
-    cargo clean
-    
-    cd /
+    echo "✓ Plymouth configured with spinner theme"
+else
+    echo "INFO: Plymouth not installed, skipping boot splash configuration"
 fi
 
 # ============================================
@@ -308,37 +277,6 @@ echo ">>> Security Features Enabled:"
 echo "    - AppArmor: Mandatory Access Control"
 echo "    - UFW: Firewall (will configure on first boot)"
 echo "    - Fail2Ban: Intrusion Prevention"
-echo "    - SSH: Hardened Configuration"
+echo "    - SSH: Hardened Configuration (manually startable)"
 echo "    - Kernel: Security Parameters Applied"
 echo "    - Services: Systemd Hardening Active"
-
-# ============================================
-# Plymouth Boot Splash Configuration
-# ============================================
-echo ">>> Configuring Plymouth boot splash..."
-
-if command -v plymouth-set-default-theme &> /dev/null; then
-    # Set spinner theme
-    plymouth-set-default-theme -R spinner
-    
-    # Rebuild initramfs with Plymouth
-    mkinitcpio -P
-    
-    echo "✓ Plymouth configured with spinner theme"
-else
-    echo "INFO: Plymouth not installed, skipping boot splash configuration"
-fi
-
-# ============================================
-# Hunter AI Assistant Setup
-# ============================================
-echo ">>> Setting up Hunter AI Assistant..."
-
-# Run AI setup script
-if [ -f /usr/local/bin/hunter-ai-setup ]; then
-    bash /usr/local/bin/hunter-ai-setup
-else
-    echo "WARNING: hunter-ai-setup script not found, skipping AI installation"
-fi
-
-echo ">>> HUNTER OS: System Configuration Complete!"

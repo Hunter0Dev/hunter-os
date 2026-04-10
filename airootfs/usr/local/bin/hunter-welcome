@@ -34,12 +34,12 @@ Username: <tt>hunter</tt>
 Password: <tt>hunter</tt>
 
 <b>📚 Documentation:</b>
-See README.md and SECURITY.md in /root for details.
+See /usr/share/doc/hunter-os/ for details.
 
 <b>💡 Quick Start:</b>
 • Firefox is installed and ready to use
-• File Manager: Thunar
-• Terminal: XFCE Terminal
+• File Manager: Dolphin
+• Terminal: Konsole
 • All GUI elements are fully functional"
 
 # Don't show again

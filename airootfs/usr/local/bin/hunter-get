@@ -37,13 +37,20 @@ case "$ACTION" in
                 install_group "C/C++ Dev Tools" "base-devel cmake gdb valgrind clang"
                 ;;
             dev-web|node|nodejs)
-                install_group "Web Dev Tools" "nodejs npm yarn typescript"
+                install_group "Web Dev Tools" "nodejs npm yarn"
                 ;;
             dev-python)
                 install_group "Python Dev Tools" "python-pip python-virtualenv tk"
                 ;;
             dev-rust)
-                install_group "Rust Dev Tools" "rust cabal-install"
+                echo ">>> Installing Rust via rustup..."
+                if command -v rustup &>/dev/null; then
+                    rustup default stable
+                    echo "Rust toolchain installed via rustup."
+                else
+                    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+                    echo "Rust installed. Run 'source ~/.cargo/env' to use it."
+                fi
                 ;;
             gaming)
                 echo "Enabling Multilib..."
@@ -52,12 +59,14 @@ case "$ACTION" in
                 ;;
             security-audit|sec-audit)
                 echo ">>> Installing Security Audit Tools..."
-                install_group "Security Audit Tools" "lynis rkhunter chkrootkit"
-                echo "NOTE: AIDE (file integrity monitor) is in AUR - install manually with:"
-                echo "  yay -S aide  or  paru -S aide"
+                install_group "Security Audit Tools" "lynis rkhunter"
+                echo "NOTE: For additional tools, install from AUR with:"
+                echo "  yay -S aide   (file integrity monitor)"
                 ;;
             pentest|penetration)
-                install_group "Penetration Testing Tools" "nmap wireshark-cli tcpdump metasploit"
+                install_group "Penetration Testing Tools" "nmap wireshark-cli tcpdump"
+                echo "NOTE: metasploit is AUR-only. Install with:"
+                echo "  yay -S metasploit"
                 ;;
             *)
                 echo "Invoking Pacman for '$TARGET'..."

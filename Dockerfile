@@ -2,7 +2,7 @@
 FROM archlinux:base-devel
 
 # Install Archiso and Build Tools (Required for generating bootloaders)
-RUN pacman -Sy --noconfirm archiso grub syslinux mtools dosfstools efibootmgr
+RUN pacman -Syu --noconfirm archiso grub syslinux mtools dosfstools efibootmgr
 
 # Create a build directory
 WORKDIR /hunter-os

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Network Manager Applet
-Comment=Manage network connections
-Exec=nm-applet
-Icon=network-workgroup
-Terminal=false
-Categories=Network;System;
-X-GNOME-Autostart-enabled=true

@@ -7,6 +7,7 @@
   #include <abstractions/base>
   #include <abstractions/bash>
   #include <abstractions/consoles>
+  #include <abstractions/nameservice>
 
   # Allow reading package manager configuration
   /etc/pacman.conf r,
@@ -27,8 +28,8 @@
   # Allow writing logs
   /var/log/pacman.log w,
   
-  # Deny network access (package manager should not make direct connections)
-  deny network,
+  # Allow network access (pacman needs to download packages)
+  # Note: Previously denied, but this broke pacman's ability to fetch packages
   
   # Allow executing shell commands
   /bin/bash ix,

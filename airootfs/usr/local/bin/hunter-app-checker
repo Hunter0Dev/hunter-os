@@ -60,7 +60,7 @@ show_warning() {
     local total_ram=$(get_total_ram_mb)
     local cpu_model=$(get_cpu_model)
     
-    zenity --warning \
+    zenity --question \
         --title="Hardware Compatibility Warning" \
         --width=500 \
         --text="<b>⚠️ Your system may not handle this application well</b>\n\n\
@@ -87,9 +87,12 @@ check_and_run() {
     
     # Only check on low-end systems
     if is_low_end_system; then
-        local ram_needed=$(is_heavy_app "$app_command")
+        # Capture the output BEFORE $? gets overwritten
+        local ram_needed
+        ram_needed=$(is_heavy_app "$app_command")
+        local is_heavy=$?
         
-        if [ $? -eq 0 ]; then
+        if [ "$is_heavy" -eq 0 ]; then
             # App is heavy, show warning
             if show_warning "$app_command" "$ram_needed"; then
                 # User clicked "Run Anyway"

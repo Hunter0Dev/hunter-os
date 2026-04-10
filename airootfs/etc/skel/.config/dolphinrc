@@ -1,0 +1,29 @@
+[General]
+BrowseThroughArchives=true
+EditableUrl=true
+GlobalViewProps=true
+ShowFullPath=true
+ShowFullPathInTitlebar=true
+Version=202
+ViewPropsTimestamp=2024,1,1,0,0,0
+
+[DetailsMode]
+ExpandableFolders=false
+PreviewSize=22
+
+[IconsMode]
+PreviewSize=128
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=22
+
+[MainWindow]
+MenuBar=Disabled
+ToolBarsMovable=Disabled
+
+[PreviewSettings]
+Plugins=thumbnails,jpegthumbnail,ffmpegthumbs,svgthumbnail,imagethumbnail
+
+[Search]
+Location=Everywhere

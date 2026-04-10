@@ -47,13 +47,11 @@ build_aur_package() {
 echo ">>> Building yay (AUR helper)..."
 build_aur_package "yay-bin"
 
-# Build pamac
-echo ">>> Building pamac..."
-build_aur_package "pamac-aur"
+# Build Calamares installer
+echo ">>> Building Calamares installer..."
+build_aur_package "calamares"
 
-# Build onlyoffice (this takes a while)
-echo ">>> Building onlyoffice..."
-build_aur_package "onlyoffice-bin"
+
 
 # Create installation script
 cat > "$PACKAGE_DIR/install-hunter-packages.sh" << 'EOF'

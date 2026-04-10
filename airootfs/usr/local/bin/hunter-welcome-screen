@@ -20,8 +20,8 @@ Click OK to create your account now." \
         --icon-name=dialog-information
 
     # Launch account creation
-    /usr/local/bin/lightdm-register-user
-    
+    /usr/local/bin/hunter-setup-user
+
     # If account creation succeeded, show success message
     if [ $? -eq 0 ]; then
         zenity --info \

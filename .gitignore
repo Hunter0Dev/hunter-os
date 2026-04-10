@@ -1,0 +1,14 @@
+# Hunter OS .gitignore
+out/
+*.iso
+target/
+.vagrant/
+work/
+*.pkg.tar.zst
+*.pkg.tar.xz
+*.log
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

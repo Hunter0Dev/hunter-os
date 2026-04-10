@@ -47,7 +47,14 @@ case "$COMMAND" in
                 ;;
             dev-rust)
                 echo ">>> [hunter] Installing Rust Environment..."
-                sudo pacman -S --noconfirm --needed rust cargo
+                if command -v rustup &>/dev/null; then
+                    rustup default stable
+                    echo "Rust stable toolchain installed via rustup."
+                else
+                    sudo pacman -S --noconfirm --needed rustup
+                    rustup default stable
+                    echo "Rust installed. Run 'source ~/.cargo/env' to use it."
+                fi
                 ;;
             *)
                 echo ">>> [hunter] Installing: $@"

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install Hunter OS
+GenericName=System Installer
+Comment=Install Hunter OS to your hard drive using Calamares
+Exec=pkexec calamares
+Icon=system-software-install
+Terminal=false
+Categories=System;Settings;
+Keywords=install;installer;setup;calamares;
+StartupNotify=true

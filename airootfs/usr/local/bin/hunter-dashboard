@@ -64,23 +64,29 @@ class HunterDashboard(Gtk.Window):
         grid.attach(btn, col, row, 1, 1)
 
     def on_install(self, w):
-        subprocess.Popen(["calamares"])
+        # Use Calamares for proper OS installation
+        subprocess.Popen(["sudo", "calamares"])
         
     def on_ai(self, w):
         subprocess.Popen(["hunter-ai-gui"])
         
     def on_docs(self, w):
-        # Open local docs or README
-        subprocess.Popen(["xfce4-terminal", "-e", "less /usr/share/doc/hunter-os/README.md"])
+        # Open local docs using Konsole (KDE terminal)
+        subprocess.Popen(["konsole", "-e", "less /usr/share/doc/hunter-os/README.md"])
 
     def on_web(self, w):
         subprocess.Popen(["firefox"])
         
     def on_term(self, w):
-        subprocess.Popen(["xfce4-terminal"])
+        # Use Konsole (KDE terminal)
+        subprocess.Popen(["konsole"])
         
     def on_monitor(self, w):
-        subprocess.Popen(["hunter-monitor"])
+        # Use KDE System Monitor or fallback to hunter-monitor
+        try:
+            subprocess.Popen(["plasma-systemmonitor"])
+        except FileNotFoundError:
+            subprocess.Popen(["hunter-monitor"])
 
 if __name__ == "__main__":
     win = HunterDashboard()
