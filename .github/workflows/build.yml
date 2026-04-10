@@ -1,1 +1,172 @@
-name: Build Hunter OS ISO\n\non:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]\n  workflow_dispatch:\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    \n    steps:\n    - name: Checkout code\n      uses: actions/checkout@v4\n      \n    - name: Set up Docker Buildx\n      uses: docker/setup-buildx-action@v3\n      \n    - name: Free up disk space\n      run: |\n        sudo rm -rf /usr/share/dotnet\n        sudo rm -rf /opt/ghc\n        sudo rm -rf "/usr/local/share/boost"\n        sudo rm -rf "$AGENT_TOOLSDIRECTORY"\n        sudo apt-get clean\n        df -h\n        \n    - name: Build Hunter OS ISO\n      run: |\n        chmod +x build_with_docker.sh\n        ./build_with_docker.sh\n        \n    - name: List output files\n      run: |\n        echo "=== Build Complete ==="\n        ls -lh out/ || echo "No out directory found"\n        du -h out/*.iso || echo "No ISO found"\n        \n    - name: Upload ISO as Artifact\n      uses: actions/upload-artifact@v4\n      if: success()\n      with:\n        name: hunter-os-iso-${{ github.run_number }}\n        path: out/*.iso\n        retention-days: 1\n        compression-level: 0\n        \n    - name: Create Release (on tag)\n      if: startsWith(github.ref, 'refs/tags/')\n      uses: softprops/action-gh-release@v1\n      with:\n        files: out/*.iso\n        body: |\n          # Hunter OS Release ${{ github.ref_name }}\n          \n          ## Download\n          Download the ISO below and write it to a USB drive.\n          \n          ## System Requirements\n          - **RAM:** 2GB minimum, 4GB recommended\n          - **Storage:** 20GB minimum\n          - **Architecture:** x86_64 (64-bit)\n          \n          ## Features\n          - Smart hardware detection\n          - Automatic profile selection\n          - 100+ packages included\n          - Security hardening (AppArmor, UFW, Fail2ban)\n      env:\n        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n
+name: Build Hunter OS ISO
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+
+    steps:
+      # ────────────────────────────────────────────
+      # 1. Checkout
+      # ────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ────────────────────────────────────────────
+      # 2. Free disk space
+      #    Ubuntu runners ship with ~25 GB free.
+      #    A full Arch ISO build needs ~15–20 GB.
+      # ────────────────────────────────────────────
+      - name: Free up disk space
+        run: |
+          echo "=== Disk space BEFORE cleanup ==="
+          df -h
+
+          # Remove large pre-installed toolchains we don't need
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+          # Clean APT cache
+          sudo apt-get clean
+
+          # Remove Android SDK
+          sudo rm -rf /usr/local/lib/android
+
+          # Remove Docker images that came pre-loaded
+          docker system prune -af || true
+
+          # Disable and remove swap (frees ~4 GB)
+          sudo swapoff -a || true
+          sudo rm -f /mnt/swapfile || true
+
+          echo "=== Disk space AFTER cleanup ==="
+          df -h
+
+      # ────────────────────────────────────────────
+      # 3. Set up Docker Buildx
+      # ────────────────────────────────────────────
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ────────────────────────────────────────────
+      # 4. Cache the Arch Linux Docker image layer
+      #    Key: changes when Dockerfile changes.
+      # ────────────────────────────────────────────
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ hashFiles('Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      # ────────────────────────────────────────────
+      # 5. Build the ISO
+      # ────────────────────────────────────────────
+      - name: Build Hunter OS ISO
+        run: |
+          chmod +x build_with_docker.sh
+          ./build_with_docker.sh
+
+      # ────────────────────────────────────────────
+      # 6. Verify the ISO was actually created
+      #    Fail fast here rather than uploading nothing
+      # ────────────────────────────────────────────
+      - name: Verify ISO output
+        run: |
+          echo "=== Build output ==="
+          ls -lh out/ || { echo "ERROR: 'out/' directory not found!"; exit 1; }
+
+          ISO=$(ls out/*.iso 2>/dev/null | head -1)
+          if [ -z "$ISO" ]; then
+            echo "ERROR: No ISO file found in out/ — build failed silently."
+            exit 1
+          fi
+
+          echo "SUCCESS: ISO created → $ISO"
+          du -h "$ISO"
+
+      # ────────────────────────────────────────────
+      # 7. Upload ISO as a workflow artifact
+      #    Available for 7 days under Actions > Artifacts
+      #    compression-level: 0 = no re-compression (ISO is already compressed)
+      # ────────────────────────────────────────────
+      - name: Upload ISO as artifact
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: hunter-os-iso-${{ github.run_number }}
+          path: out/*.iso
+          retention-days: 7
+          compression-level: 0
+
+      # ────────────────────────────────────────────
+      # 8. Publish a GitHub Release when a tag is pushed
+      #    Usage: git tag v2025.04.10 && git push --tags
+      # ────────────────────────────────────────────
+      - name: Create GitHub Release (on tag push)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: out/*.iso
+          body: |
+            # Hunter OS ${{ github.ref_name }}
+
+            A security-focused Linux distribution built on Arch Linux with a
+            polished KDE Plasma 6 desktop (macOS-inspired).
+
+            ---
+
+            ## 📥 Installation
+
+            **Linux / macOS — write to USB with dd:**
+            ```bash
+            sudo dd if=hunter-os-*.iso of=/dev/sdX bs=4M status=progress oflag=sync
+            ```
+
+            **Windows — use [Rufus](https://rufus.ie) or [Etcher](https://etcher.balena.io)**
+
+            ---
+
+            ## 💻 System Requirements
+
+            | Component   | Minimum  | Recommended |
+            |-------------|----------|-------------|
+            | RAM         | 3 GB     | 4 GB+       |
+            | Storage     | 20 GB    | 40 GB+      |
+            | CPU         | x86_64   | 4+ cores    |
+            | Firmware    | BIOS or UEFI | UEFI    |
+
+            ---
+
+            ## 🔐 Security Features
+
+            - **AppArmor** — Mandatory Access Control
+            - **UFW Firewall** — deny-all inbound by default
+            - **Fail2Ban** — SSH brute-force protection
+            - **Hardened kernel** — sysctl security parameters applied
+            - **SSH** — not auto-started; manually enable when needed
+
+            ---
+
+            ## 🖥️ Default Live Credentials
+
+            | Field    | Value    |
+            |----------|----------|
+            | Username | `hunter` |
+            | Password | `hunter` |
+
+            > ⚠️ **Change credentials immediately after installation!**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
