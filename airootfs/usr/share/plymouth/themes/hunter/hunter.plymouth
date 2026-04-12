@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Hunter OS
+Description=Hunter OS - Secure Linux Distribution Boot Splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/hunter
+ScriptFile=/usr/share/plymouth/themes/hunter/hunter.script

@@ -1,13 +1,15 @@
 [Unit]
 Description=Hunter OS First Boot Setup
-After=network.target
+After=sddm.service graphical.target
+Wants=sddm.service
 ConditionPathExists=!/var/lib/hunter-setup-done
 
 [Service]
 Type=oneshot
+# Always mark as done even on failure to prevent infinite re-runs on next boot
 ExecStart=/usr/local/bin/hunter-first-boot.sh
-ExecStartPost=/usr/bin/touch /var/lib/hunter-setup-done
+ExecStopPost=/usr/bin/touch /var/lib/hunter-setup-done
 RemainAfterExit=yes
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical.target

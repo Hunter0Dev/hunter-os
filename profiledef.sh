@@ -43,4 +43,14 @@ file_permissions=(
   ["/etc/ufw"]="0:0:755"
   ["/etc/apparmor.d"]="0:0:755"
   ["/etc/ssh/sshd_config.d"]="0:0:755"
+
+  # Plymouth boot splash theme
+  ["/usr/share/plymouth/themes/hunter"]="0:0:755"
+  ["/usr/share/plymouth/themes/hunter/hunter.plymouth"]="0:0:644"
+  ["/usr/share/plymouth/themes/hunter/hunter.script"]="0:0:644"
+  ["/usr/share/plymouth/themes/hunter/logo.png"]="0:0:644"
+  ["/usr/share/plymouth/themes/hunter/dot.png"]="0:0:644"
+
+  # Desktop wallpaper
+  ["/usr/share/backgrounds/hunter-os-dark.png"]="0:0:644"
 )

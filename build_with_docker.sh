@@ -51,7 +51,7 @@ docker run --privileged --rm -v "$(pwd):/hunter-os" hunter-builder /bin/bash -c 
     ln -sf /usr/lib/systemd/system/qemu-guest-agent.service \"\$SYSTEMD_DIR/multi-user.target.wants/qemu-guest-agent.service\" 2>/dev/null || true
 
     # Enable Setup Service
-    ln -sf /etc/systemd/system/setup-hunter.service \"\$SYSTEMD_DIR/multi-user.target.wants/setup-hunter.service\"
+    ln -sf /etc/systemd/system/setup-hunter.service \"\$SYSTEMD_DIR/graphical.target.wants/setup-hunter.service\"
 
     echo '>>> Building ISO...'
     mkarchiso -v -w /tmp/archiso-work -o /hunter-os/out .

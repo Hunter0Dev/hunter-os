@@ -1,0 +1,162 @@
+// ╔══════════════════════════════════════════════════════════════╗
+// ║          HUNTER OS - Plymouth Boot Splash Theme              ║
+// ║          macOS-inspired  |  Spinner + Progress Bar           ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+// ─── Screen Setup ──────────────────────────────────────────────────────────
+screen.w  = Window.GetWidth(0);
+screen.h  = Window.GetHeight(0);
+
+// ─── Background Gradient ───────────────────────────────────────────────────
+// Deep dark blue-black (matches wallpaper palette)
+Window.SetBackgroundTopColor(0.031, 0.039, 0.063);      // #081020
+Window.SetBackgroundBottomColor(0.016, 0.020, 0.035);   // #040510
+
+// ─── Logo ──────────────────────────────────────────────────────────────────
+logo.image  = Image("logo.png");
+logo.sprite = Sprite(logo.image);
+logo.x      = Math.Int(screen.w / 2 - logo.image.GetWidth()  / 2);
+logo.y      = Math.Int(screen.h / 2 - logo.image.GetHeight() / 2 - 90);
+logo.sprite.SetX(logo.x);
+logo.sprite.SetY(logo.y);
+logo.sprite.SetZ(10);
+
+// ─── Spinner Configuration ─────────────────────────────────────────────────
+spinner.count  = 12;             // Dots in the spinner ring
+spinner.radius = 34;             // Orbit radius px
+spinner.speed  = 20;             // Degrees to advance each frame
+spinner.frame  = 0;
+
+// Centre spinner below the logo
+spinner.cx = Math.Int(screen.w / 2);
+spinner.cy = Math.Int(logo.y + logo.image.GetHeight() + 60);
+
+dot.image = Image("dot.png");
+dot.w     = dot.image.GetWidth();
+dot.h     = dot.image.GetHeight();
+
+// Pre-create all dot sprites
+for (i = 0; i < spinner.count; i++) {
+    spinner.dot[i] = Sprite(dot.image);
+    spinner.dot[i].SetZ(10);
+    spinner.dot[i].SetOpacity(0);
+}
+
+// ─── Progress Bar ──────────────────────────────────────────────────────────
+bar.w = Math.Int(screen.w * 0.30);
+bar.h = 3;
+bar.x = Math.Int(screen.w / 2 - bar.w / 2);
+bar.y = screen.h - 56;
+bar.progress = 0;
+
+// Track background  (very dim, dark teal)
+bar.bg.image  = Image.Scale(
+    Image.Color(bar.w, bar.h, 0.04, 0.10, 0.14, 1.0),
+    bar.w, bar.h);
+bar.bg.sprite = Sprite(bar.bg.image);
+bar.bg.sprite.SetX(bar.x);
+bar.bg.sprite.SetY(bar.y);
+bar.bg.sprite.SetZ(5);
+
+// Fill bar (cyan — starts 1 px wide, invisible)
+bar.fill.image  = Image.Scale(
+    Image.Color(1, bar.h, 0.00, 0.75, 1.00, 1.0),
+    1, bar.h);
+bar.fill.sprite = Sprite(bar.fill.image);
+bar.fill.sprite.SetX(bar.x);
+bar.fill.sprite.SetY(bar.y);
+bar.fill.sprite.SetZ(6);
+bar.fill.sprite.SetOpacity(0);
+
+// ─── Glow Line under logo ──────────────────────────────────────────────────
+// A thin glowing separator between logo and spinner
+glow.w      = Math.Int(logo.image.GetWidth() * 0.6);
+glow.h      = 1;
+glow.image  = Image.Scale(
+    Image.Color(glow.w, glow.h, 0.00, 0.75, 1.00, 0.5),
+    glow.w, glow.h);
+glow.sprite = Sprite(glow.image);
+glow.sprite.SetX(Math.Int(screen.w / 2 - glow.w / 2));
+glow.sprite.SetY(logo.y + logo.image.GetHeight() + 18);
+glow.sprite.SetZ(8);
+
+// ─── Animation Refresh Callback ────────────────────────────────────────────
+fun refresh_callback() {
+    spinner.frame++;
+
+    for (i = 0; i < spinner.count; i++) {
+        // Each dot is evenly distributed, and the whole ring rotates
+        angle_rad = (i * (360 / spinner.count) - spinner.frame * spinner.speed)
+                    * Math.Pi / 180;
+
+        spinner.dot[i].SetX(
+            spinner.cx + spinner.radius * Math.Cos(angle_rad) - dot.w / 2);
+        spinner.dot[i].SetY(
+            spinner.cy + spinner.radius * Math.Sin(angle_rad) - dot.h / 2);
+
+        // Trailing opacity: dot[0] = brightest (1.0), dot[count-1] = faintest (~0.1)
+        // We use a smooth linear fade from 1.0 down to 0.08
+        opacity = 0.08 + 0.92 * ((spinner.count - i) / spinner.count);
+        spinner.dot[i].SetOpacity(opacity);
+    }
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+// ─── Boot Progress Callback ────────────────────────────────────────────────
+fun progress_callback(duration, progress) {
+    bar.progress = progress;
+
+    if (progress > 0) {
+        fill_w = Math.Int(bar.w * progress);
+        if (fill_w < 1) { fill_w = 1; }
+
+        // Rebuild fill image at new width
+        bar.fill.image = Image.Scale(
+            Image.Color(fill_w, bar.h, 0.00, 0.75, 1.00, 1.0),
+            fill_w, bar.h);
+        bar.fill.sprite.SetImage(bar.fill.image);
+        bar.fill.sprite.SetOpacity(1.0);
+    }
+}
+
+Plymouth.SetBootProgressFunction(progress_callback);
+
+// ─── Password / LUKS Dialog ────────────────────────────────────────────────
+// If the user has an encrypted drive, show bullet dots for the passphrase
+
+fun clear_bullets() {
+    for (i = 0; i < 32; i++) {
+        if (dialog.bullet[i]) {
+            dialog.bullet[i].SetOpacity(0);
+        }
+    }
+}
+
+fun display_password_callback(prompt, bullets) {
+    // Hide spinner while typing password
+    for (i = 0; i < spinner.count; i++) {
+        spinner.dot[i].SetOpacity(0);
+    }
+
+    // Show bullet dots centred on screen, slightly below logo
+    for (i = 0; i < bullets; i++) {
+        bx = Math.Int(screen.w / 2 - (bullets * 18) / 2 + i * 18);
+        by = spinner.cy;
+        dialog.bullet[i] = Sprite(dot.image);
+        dialog.bullet[i].SetX(bx);
+        dialog.bullet[i].SetY(by);
+        dialog.bullet[i].SetZ(20);
+        dialog.bullet[i].SetOpacity(1.0);
+    }
+}
+
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
+// ─── Normal Display (restores spinner after dialog) ───────────────────────
+fun display_normal_callback() {
+    clear_bullets();
+    // Spinner opacity is restored by the next refresh_callback tick
+}
+
+Plymouth.SetDisplayNormalFunction(display_normal_callback);

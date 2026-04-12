@@ -249,12 +249,16 @@ fi
 echo ">>> Configuring Plymouth boot splash..."
 
 if command -v plymouth-set-default-theme &> /dev/null; then
-    # Set spinner theme
-    plymouth-set-default-theme -R spinner
-    
-    # Note: initramfs was already built above, no duplicate mkinitcpio -P call needed
-    
-    echo "✓ Plymouth configured with spinner theme"
+    # Verify the custom theme was installed correctly
+    if [ -f /usr/share/plymouth/themes/hunter/hunter.plymouth ]; then
+        # Set the Hunter OS custom theme and rebuild initramfs
+        plymouth-set-default-theme -R hunter
+        echo "✓ Plymouth configured with Hunter OS theme"
+    else
+        # Fallback to built-in spinner if custom theme is missing
+        plymouth-set-default-theme -R spinner
+        echo "WARNING: Hunter OS theme not found, falling back to spinner"
+    fi
 else
     echo "INFO: Plymouth not installed, skipping boot splash configuration"
 fi
