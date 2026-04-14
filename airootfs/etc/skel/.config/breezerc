@@ -1,0 +1,20 @@
+# Hunter OS — Breeze Window Decoration Configuration
+# Minimal, clean window borders (macOS-like)
+
+[Common]
+# No visible window outline
+OutlineCloseButton=false
+OutlineIntensity=Outline_Off
+ShadowSize=ShadowLarge
+ShadowStrength=180
+ShadowColor=0,0,0
+
+[Windeco]
+# Very thin or no titlebar border
+BorderSize=None
+DrawBackgroundGradient=false
+TitleAlignment=AlignLeft
+IsMaximizedButtonVisible=true
+IsMinimizedButtonVisible=true
+IsCloseButtonVisible=true
+DrawBorderOnMaximizedWindows=false

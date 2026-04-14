@@ -133,9 +133,7 @@ class HunterAIGUI(Gtk.Window):
         subprocess.Popen([
             "konsole", "-e", "bash", "-c",
             "echo '>>> Installing Ollama AI Engine...' && "
-            "curl -fsSL https://ollama.com/install.sh | sh && "
-            "echo '>>> Pulling Qwen2.5-Coder model...' && "
-            "ollama pull qwen2.5-coder:1.5b && "
+            "sudo hunter-ai-setup && "
             "echo '>>> Done! Restart Hunter AI to use it.' && "
             "read -p 'Press Enter to close...'"
         ])

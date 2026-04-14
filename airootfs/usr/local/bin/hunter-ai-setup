@@ -6,9 +6,19 @@ set -e
 
 echo "=== Hunter AI Assistant Setup ==="
 
-# Download ollama binary
+# Download ollama binary with verification
 echo "[1/4] Downloading ollama..."
-curl -fsSL https://ollama.com/download/ollama-linux-amd64 -o /usr/local/bin/ollama
+OLLAMA_TMP=$(mktemp)
+curl -fsSL https://ollama.com/download/ollama-linux-amd64 -o "$OLLAMA_TMP"
+
+# Verify the download is a valid ELF binary (basic integrity check)
+if ! file "$OLLAMA_TMP" | grep -q "ELF 64-bit"; then
+    echo "ERROR: Downloaded file is not a valid Linux binary. Aborting."
+    rm -f "$OLLAMA_TMP"
+    exit 1
+fi
+
+mv "$OLLAMA_TMP" /usr/local/bin/ollama
 chmod +x /usr/local/bin/ollama
 
 # Create ollama user and directories

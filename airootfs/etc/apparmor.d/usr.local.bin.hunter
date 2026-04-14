@@ -34,4 +34,9 @@
   # Allow executing shell commands
   /bin/bash ix,
   /usr/bin/bash ix,
+
+  # Allow network access (pacman requires TCP to download packages)
+  network inet  stream,
+  network inet6 stream,
+  network inet  dgram,
 }

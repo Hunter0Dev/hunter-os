@@ -34,6 +34,7 @@ file_permissions=(
   ["/usr/local/bin/hunter-dashboard"]="0:0:755"
   ["/usr/local/bin/hunter-apply-theme"]="0:0:755"
   ["/usr/local/bin/hunter-first-boot.sh"]="0:0:755"
+  ["/usr/local/bin/hunter-register-user-gui"]="0:0:755"
   ["/etc/skel/.xinitrc"]="0:0:755"
   ["/etc/skel/Desktop/install-hunter-os.desktop"]="0:0:755"
   ["/etc/skel/Desktop/hunter-monitor.desktop"]="0:0:755"
@@ -43,6 +44,8 @@ file_permissions=(
   ["/etc/ufw"]="0:0:755"
   ["/etc/apparmor.d"]="0:0:755"
   ["/etc/ssh/sshd_config.d"]="0:0:755"
+  ["/etc/profile.d/hunter-security.sh"]="0:0:644"
+  ["/etc/polkit-1/rules.d/50-hunter-admin.rules"]="0:0:644"
 
   # Plymouth boot splash theme
   ["/usr/share/plymouth/themes/hunter"]="0:0:755"
@@ -53,4 +56,12 @@ file_permissions=(
 
   # Desktop wallpaper
   ["/usr/share/backgrounds/hunter-os-dark.png"]="0:0:644"
+
+  # Dashboard icon
+  ["/usr/share/pixmaps/hunter-os.png"]="0:0:644"
+
+  # SDDM login theme
+  ["/usr/share/sddm/themes/hunter"]="0:0:755"
+  ["/usr/share/sddm/themes/hunter/metadata.desktop"]="0:0:644"
+  ["/usr/share/sddm/themes/hunter/Main.qml"]="0:0:644"
 )

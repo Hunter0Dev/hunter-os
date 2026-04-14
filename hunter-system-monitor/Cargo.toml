@@ -6,7 +6,7 @@ authors = ["Hunter OS Team"]
 description = "System monitor for Hunter OS - like Windows Task Manager"
 
 [dependencies]
-sysinfo = "0.30"
+sysinfo = "0.29"
 gtk = { version = "0.18", package = "gtk4" }
 glib = "0.18"
 nvml-wrapper = "0.9"  # NVIDIA GPU monitoring

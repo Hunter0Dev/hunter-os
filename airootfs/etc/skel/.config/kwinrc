@@ -1,3 +1,6 @@
+# Hunter OS — KWin Compositor & Effects Configuration
+# Tuned for premium macOS-like smoothness and visual effects
+
 [Windows]
 BorderlessMaximizedWindows=true
 Placement=Centered
@@ -8,37 +11,104 @@ Id_2=desktop-2
 Id_3=desktop-3
 Id_4=desktop-4
 Number=4
-Rows=2
+Rows=1
 Name_1=Desktop 1
 Name_2=Desktop 2
 Name_3=Desktop 3
 Name_4=Desktop 4
 
+# ─── Compositing (smoothness core) ─────────────────────────
 [Compositing]
 Backend=OpenGL
 GLCore=true
-AnimationSpeed=3
+GLPreferBufferSwap=e
+GLTextureFilter=2
+LatencyPolicy=Low
 Enabled=true
 HiddenPreviews=5
+AnimationSpeed=3
+WindowsBlockCompositing=false
 
+# ─── Effects ────────────────────────────────────────────────
+[Plugins]
+# Blur behind windows and panels (premium transparency feel)
+blurEnabled=true
+# Magic Lamp minimize (macOS Genie effect equivalent)
+magiclampEnabled=true
+minimizeanimationEnabled=false
+# Fade for window open/close
+fadeEnabled=true
+# Slide animation when switching virtual desktops
+slideEnabled=true
+# Overview / Mission Control (activated by hot corner)
+overviewEnabled=true
+# Dim inactive windows slightly (focus attention like macOS)
+diminactiveEnabled=true
+# Translucency for inactive windows
+translucencyEnabled=true
+# Rounded window corners
+screenedgeEnabled=true
+# Desktop slide for virtual desktop switching
+desktopgridEnabled=true
+# Smooth window resize
+resizeEnabled=true
+# Disable wobbly windows (not macOS-like)
+wobblywindowsEnabled=false
+# Disable desktop cube (not macOS-like)
+cubeEnabled=false
+
+# ─── Blur Configuration ────────────────────────────────────
 [Effect-blur]
-BlurStrength=8
-NoiseStrength=0
+BlurStrength=10
+NoiseStrength=2
 
+# ─── Overview / Mission Control ────────────────────────────
 [Effect-overview]
-BorderActivate=9
+# Top-left hot corner triggers Mission Control (like macOS)
+BorderActivate=1
 
+# ─── Dim Inactive Windows ──────────────────────────────────
+[Effect-diminactive]
+Strength=15
+
+# ─── Translucency ──────────────────────────────────────────
 [Effect-translucency]
-Inactive=90
+Inactive=92
+MoveResize=85
 
+# ─── Magic Lamp (Genie) Settings ──────────────────────────
+[Effect-magiclamp]
+AnimationDuration=350
+
+# ─── Desktop Slide Effect ──────────────────────────────────
+[Effect-slide]
+Duration=300
+HorizontalGap=50
+VerticalGap=50
+
+# ─── Window Decorations (traffic-light buttons on left) ───
 [org.kde.kdecoration2]
 ButtonsOnLeft=XIA
 ButtonsOnRight=
 library=org.kde.breeze
 theme=Breeze
+BorderSize=None
+BorderSizeAuto=false
 
+# ─── Tab Switcher (thumbnail grid like Expose) ────────────
 [TabBox]
 LayoutName=thumbnail_grid
 
+# ─── Mouse Bindings ───────────────────────────────────────
 [MouseBindings]
 CommandAllKey=Meta
+
+# ─── Night Color (reduces eye strain) ─────────────────────
+[NightColor]
+Active=true
+Mode=Automatic
+NightTemperature=4200
+
+# ─── Edge Actions ─────────────────────────────────────────
+[ElectricBorders]
+TopLeft=Overview

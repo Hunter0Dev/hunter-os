@@ -6,10 +6,41 @@
 set -e
 
 # Check if running as root
-if [ "$EUID" -ne 0 ]; then 
+if [ "$EUID" -ne 0 ]; then
     echo "This must be run with sudo"
     exit 1
 fi
+
+# ============================================
+# Password Validation
+# ============================================
+
+validate_password() {
+    local pw="$1"
+    local errors=""
+
+    if [ ${#pw} -lt 8 ]; then
+        errors="${errors}\n• Must be at least 8 characters"
+    fi
+
+    if ! echo "$pw" | grep -qP '[A-Z]'; then
+        errors="${errors}\n• Must contain at least one uppercase letter"
+    fi
+
+    if ! echo "$pw" | grep -qP '[a-z]'; then
+        errors="${errors}\n• Must contain at least one lowercase letter"
+    fi
+
+    if ! echo "$pw" | grep -qP '[0-9]'; then
+        errors="${errors}\n• Must contain at least one number"
+    fi
+
+    if [ -n "$errors" ]; then
+        echo -e "$errors"
+        return 1
+    fi
+    return 0
+}
 
 # ============================================
 # Hardware Detection Functions
@@ -29,7 +60,7 @@ get_cpu_model() {
 
 detect_hardware_profile() {
     local ram_mb=$(get_total_ram_mb)
-    
+
     if [ "$ram_mb" -le 2048 ]; then
         echo "lite"
     elif [ "$ram_mb" -le 4096 ]; then
@@ -58,7 +89,6 @@ CPU_MODEL=$(get_cpu_model)
 PROFILE=$(detect_hardware_profile)
 PROFILE_DESC=$(get_profile_description "$PROFILE")
 
-# Welcome message
 zenity --question \
     --title="Hunter OS - Create User Account" \
     --width=550 \
@@ -100,15 +130,30 @@ if [[ ! "$USERNAME" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
     exit 1
 fi
 
-# Get password
-PASSWORD=$(zenity --password \
-    --title="Create Your Account" \
-    --text="Enter password for $USERNAME:")
-
-if [ -z "$PASSWORD" ]; then
-    zenity --error --text="Password cannot be empty"
+# Check if user already exists
+if id "$USERNAME" &>/dev/null; then
+    zenity --error --text="User '$USERNAME' already exists."
     exit 1
 fi
+
+# Get password with strength validation
+while true; do
+    PASSWORD=$(zenity --password \
+        --title="Create Your Account" \
+        --text="Enter password for $USERNAME (min 8 chars, must include uppercase, lowercase, and number):")
+
+    if [ -z "$PASSWORD" ]; then
+        zenity --error --text="Password cannot be empty"
+        exit 1
+    fi
+
+    pw_errors=$(validate_password "$PASSWORD" 2>&1) || {
+        zenity --error --title="Weak Password" \
+            --text="<b>Password does not meet requirements:</b>\n$pw_errors\n\nPlease try again."
+        continue
+    }
+    break
+done
 
 # Confirm password
 PASSWORD2=$(zenity --password \
@@ -132,11 +177,11 @@ FULLNAME=$(zenity --entry \
 
 (
 echo "10" ; echo "# Creating user account..."
-# Create user
+# Create user with private group (-U) and private home dir
 if [ -n "$FULLNAME" ]; then
-    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash -c "$FULLNAME" "$USERNAME"
+    useradd -m -U -G wheel,audio,video,storage,optical,network -s /bin/bash -c "$FULLNAME" "$USERNAME"
 else
-    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash "$USERNAME"
+    useradd -m -U -G wheel,audio,video,storage,optical,network -s /bin/bash "$USERNAME"
 fi
 echo "$USERNAME:$PASSWORD" | chpasswd
 
@@ -144,13 +189,14 @@ echo "$USERNAME:$PASSWORD" | chpasswd
 echo "$USERNAME ALL=(ALL) ALL" > /etc/sudoers.d/"$USERNAME"
 chmod 440 /etc/sudoers.d/"$USERNAME"
 
-echo "30" ; echo "# Setting up home directory..."
+echo "30" ; echo "# Setting up private home directory..."
 mkdir -p "/home/$USERNAME"/{Documents,Downloads,Pictures,Videos,Music}
 cp -r /etc/skel/. "/home/$USERNAME/"
 chown -R "$USERNAME:$USERNAME" "/home/$USERNAME"
+# CRITICAL: Private home directory — other users cannot access
+chmod 700 "/home/$USERNAME"
 
 echo "60" ; echo "# Optimizing for your hardware..."
-# Remove heavy apps if lite profile
 if [ "$PROFILE" = "lite" ]; then
     for app in libreoffice-fresh gimp inkscape thunderbird audacity; do
         pacman -Rns --noconfirm "$app" 2>/dev/null || true
@@ -158,7 +204,7 @@ if [ "$PROFILE" = "lite" ]; then
 fi
 
 echo "80" ; echo "# Configuring display manager..."
-# Disable auto-login for security
+# Disable auto-login for security (real user now exists)
 if [ -f /etc/sddm.conf.d/hunter.conf ]; then
     sed -i 's/^User=hunter/#User=hunter/' /etc/sddm.conf.d/hunter.conf
 fi
@@ -196,11 +242,13 @@ zenity --info \
     --text="<b>Your account has been created!</b>\n\n\
 <b>Username:</b> $USERNAME\n\
 <b>Profile:</b> $PROFILE_DESC\n\n\
+<b>Security:</b>\n\
+• Your home directory is private (only you can access it)\n\
+• Sudo requires your password\n\
+• Use /home/Shared to share files with other users\n\n\
 <b>Note:</b>\n\
-• You can now log in with your account\n\
-• Sudo requires your password (more secure)\n\
 • To install Hunter OS permanently, use the\n\
   <b>Install Hunter OS</b> desktop shortcut\n\n\
 Please log out and log back in with your new account."
 
-echo "Account created: $USERNAME ($PROFILE)"
+echo "Account created: $USERNAME ($PROFILE) [home=700, private group]"

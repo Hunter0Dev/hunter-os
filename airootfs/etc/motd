@@ -1,24 +1,14 @@
-╔══════════════════════════════════════════════════════════╗
-║           Welcome to Hunter OS - Live Environment        ║
-╚══════════════════════════════════════════════════════════╝
 
-🔐 Security Features Active:
-   • AppArmor Enabled
-   • UFW Firewall Active  
-   • Fail2Ban Running
-   • SSH Hardened
+  HUNTER OS - Security-Focused Linux
 
-🤖 AI Assistant Available:
-   Type: hunter-ai-gui (or install Ollama manually)
+  Security: AppArmor + UFW + Fail2Ban + Hardened Kernel
+  Privacy:  Private home dirs | Process isolation | umask 077
+  Sharing:  /home/Shared (for cross-user file sharing)
 
-📚 Quick Start:
-   • hunter --help          - View available commands
-   • hunter-welcome         - Launch welcome screen
-   • plasma-systemmonitor   - System monitor
+  Commands:
+    hunter --help          Package manager
+    hunter status          Security overview
+    hunter audit           Full security audit
 
-🌐 Network Tools:
-   • nmap, traceroute, whois, bind-tools
-
-📖 Documentation: /usr/share/doc/hunter-os/
-🐛 Report Issues: https://github.com/hunter-os/hunter-os/issues
+  Docs: /usr/share/doc/hunter-os/
 

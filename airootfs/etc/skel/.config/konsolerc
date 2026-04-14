@@ -1,6 +1,6 @@
 [Appearance]
 ColorScheme=Breeze Dark
-Font=JetBrains Mono,11,-1,5,50,0,0,0,0,0,Regular
+Font=JetBrains Mono,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 
 [Desktop Entry]
 DefaultProfile=Hunter.profile
@@ -8,3 +8,8 @@ DefaultProfile=Hunter.profile
 [MainWindow]
 MenuBar=Disabled
 ToolBarsMovable=Disabled
+
+[TabBar]
+TabBarPosition=Top
+TabBarVisibility=ShowTabBarWhenNeeded
+NewTabBehavior=PutNewTabAtTheEnd

@@ -1,0 +1,9 @@
+# Hunter OS — KRunner (Spotlight-like search)
+# Activated with Meta key or Alt+Space
+
+[General]
+FreeFloating=true
+RetainPriorSearch=false
+
+[Plugins]
+baborasoftwarecenterEnabled=false

@@ -10,48 +10,74 @@ echo "======================================"
 echo ""
 
 # Check if running as root
-if [ "$EUID" -ne 0 ]; then 
+if [ "$EUID" -ne 0 ]; then
     echo "This script must be run with sudo"
     echo "Usage: sudo hunter-register-user"
     exit 1
 fi
 
+# Password validation function
+validate_password() {
+    local pw="$1"
+    local ok=true
+
+    if [ ${#pw} -lt 8 ]; then
+        echo "  - Must be at least 8 characters"
+        ok=false
+    fi
+    if ! echo "$pw" | grep -qP '[A-Z]'; then
+        echo "  - Must contain at least one uppercase letter"
+        ok=false
+    fi
+    if ! echo "$pw" | grep -qP '[a-z]'; then
+        echo "  - Must contain at least one lowercase letter"
+        ok=false
+    fi
+    if ! echo "$pw" | grep -qP '[0-9]'; then
+        echo "  - Must contain at least one number"
+        ok=false
+    fi
+
+    $ok
+}
+
 # Get username
 while true; do
     read -p "Enter new username (lowercase, no spaces): " username
-    
-    # Validate username
+
     if [[ ! "$username" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
-        echo "❌ Invalid username. Use only lowercase letters, numbers, underscore, and hyphen."
+        echo "Invalid username. Use only lowercase letters, numbers, underscore, and hyphen."
         continue
     fi
-    
-    # Check if user already exists
+
     if id "$username" &>/dev/null; then
-        echo "❌ User '$username' already exists. Please choose a different username."
+        echo "User '$username' already exists. Please choose a different username."
         continue
     fi
-    
+
     break
 done
 
-# Get password
+# Get password with strength enforcement
 while true; do
-    read -s -p "Enter password: " password
+    read -s -p "Enter password (min 8 chars, upper+lower+number): " password
     echo ""
     read -s -p "Confirm password: " password2
     echo ""
-    
+
     if [ "$password" != "$password2" ]; then
-        echo "❌ Passwords do not match. Please try again."
+        echo "Passwords do not match. Please try again."
         continue
     fi
-    
-    if [ ${#password} -lt 6 ]; then
-        echo "❌ Password must be at least 6 characters long."
+
+    errors=$(validate_password "$password" 2>&1)
+    if [ $? -ne 0 ]; then
+        echo "Password does not meet requirements:"
+        echo "$errors"
+        echo "Please try again."
         continue
     fi
-    
+
     break
 done
 
@@ -63,9 +89,9 @@ echo ""
 echo "Creating user account..."
 
 if [ -n "$fullname" ]; then
-    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash -c "$fullname" "$username"
+    useradd -m -U -G wheel,audio,video,storage,optical,network -s /bin/bash -c "$fullname" "$username"
 else
-    useradd -m -G wheel,audio,video,storage,optical,network -s /bin/bash "$username"
+    useradd -m -U -G wheel,audio,video,storage,optical,network -s /bin/bash "$username"
 fi
 
 # Set password
@@ -73,17 +99,24 @@ echo "$username:$password" | chpasswd
 
 # Create user directories
 mkdir -p "/home/$username"/{Documents,Downloads,Pictures,Videos,Music}
-chown -R "$username:$username" "/home/$username"
 
 # Copy default configs
 cp -r /etc/skel/. "/home/$username/"
 chown -R "$username:$username" "/home/$username"
 
+# CRITICAL: Private home directory — other users cannot access
+chmod 700 "/home/$username"
+
+# Set up proper sudo (with password required)
+echo "$username ALL=(ALL) ALL" > /etc/sudoers.d/"$username"
+chmod 440 /etc/sudoers.d/"$username"
+
 echo ""
-echo "✅ User account created successfully!"
+echo "User account created successfully!"
 echo ""
 echo "Username: $username"
-echo "Home directory: /home/$username"
+echo "Home directory: /home/$username (private — only you can access)"
+echo "Shared folder: /home/Shared (for sharing files between users)"
 echo ""
 echo "You can now:"
 echo "  - Login via GUI (logout and select your user)"

@@ -12,35 +12,32 @@ zenity --info \
   --height=400 \
   --text="<big><b>Hunter OS - Security-Focused Linux Distribution</b></big>
 
-<b>🔒 Security Status:</b>
-• Firewall: Active (UFW)
+<b>Security Status:</b>
+• Firewall: Active (UFW - deny all inbound)
 • Intrusion Prevention: Active (Fail2Ban)
 • AppArmor: Enabled
-• SSH: Hardened Configuration
+• SSH: Hardened (key-only, not auto-started)
 
-<b>📦 Package Management:</b>
+<b>User Isolation (Windows/macOS model):</b>
+• Home directories are private (only you can access yours)
+• Other users cannot see your files or processes
+• Use /home/Shared to share files between accounts
+• Default umask: 077 (new files are private)
+
+<b>Package Management:</b>
 • <tt>hunter install &lt;package&gt;</tt> - Install software
 • <tt>hunter remove &lt;package&gt;</tt> - Remove software
 • <tt>hunter update</tt> - Update system
-• <tt>hunter search &lt;term&gt;</tt> - Search packages
-
-<b>🛡️ Security Commands:</b>
-• <tt>hunter audit</tt> - Run security audit
 • <tt>hunter status</tt> - Check security status
-• <tt>hunter firewall</tt> - Manage firewall
 
-<b>👤 Default Credentials:</b>
-Username: <tt>hunter</tt>
-Password: <tt>hunter</tt>
+<b>Default Live Credentials:</b>
+Username: <tt>hunter</tt>  Password: <tt>hunter</tt>
+(Change immediately after installation!)
 
-<b>📚 Documentation:</b>
-See /usr/share/doc/hunter-os/ for details.
-
-<b>💡 Quick Start:</b>
-• Firefox is installed and ready to use
-• File Manager: Dolphin
-• Terminal: Konsole
-• All GUI elements are fully functional"
+<b>Quick Start:</b>
+• Firefox, Dolphin, Konsole ready to use
+• <tt>hunter audit</tt> - Full security audit
+• <tt>hunter firewall status</tt> - Check firewall"
 
 # Don't show again
 mkdir -p ~/.config/hunter-os

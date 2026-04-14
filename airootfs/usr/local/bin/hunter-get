@@ -27,7 +27,15 @@ print_help() {
 
 install_group() {
     echo ">>> HUNTER-GET: Installing $1..."
-    sudo pacman -S --noconfirm --needed $2
+    sudo pacman -S --noconfirm --needed "$2"
+}
+
+enable_multilib() {
+    if ! grep -q '\[multilib\]' /etc/pacman.conf; then
+        echo -e '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf > /dev/null
+        sudo pacman -Sy --noconfirm
+        echo ">>> Multilib repository enabled."
+    fi
 }
 
 case "$ACTION" in
@@ -37,7 +45,7 @@ case "$ACTION" in
                 install_group "C/C++ Dev Tools" "base-devel cmake gdb valgrind clang"
                 ;;
             dev-web|node|nodejs)
-                install_group "Web Dev Tools" "nodejs npm yarn"
+                install_group "Web Dev Tools" "nodejs npm"
                 ;;
             dev-python)
                 install_group "Python Dev Tools" "python-pip python-virtualenv tk"
@@ -53,8 +61,8 @@ case "$ACTION" in
                 fi
                 ;;
             gaming)
-                echo "Enabling Multilib..."
-                # This would require uncommenting multilib in pacman.conf, advanced step.
+                echo ">>> Enabling Multilib and installing gaming tools..."
+                enable_multilib
                 install_group "Gaming Essentials" "steam lutris gamemode"
                 ;;
             security-audit|sec-audit)
@@ -70,7 +78,7 @@ case "$ACTION" in
                 ;;
             *)
                 echo "Invoking Pacman for '$TARGET'..."
-                sudo pacman -S --needed $TARGET
+                sudo pacman -S --needed "$TARGET"
                 ;;
         esac
         ;;
@@ -93,6 +101,10 @@ case "$ACTION" in
                 sudo chmod 755 /usr/local/bin/hunter
                 sudo chmod 755 /usr/local/bin/hunter-get
                 sudo chmod 755 /etc/ssh/sshd_config.d
+                # Ensure all home directories are private
+                for dir in /home/*/; do
+                    [ -d "$dir" ] && sudo chmod 700 "$dir"
+                done
                 echo "System permissions reset."
                 ;;
             *)

@@ -1,221 +1,289 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import SddmComponents 2.0
+// Hunter OS — SDDM Login Theme
+// Premium dark, zero gradients, depth through shadow only
 
-Rectangle {
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
+
+Item {
     id: root
-    width: Screen.width
+    width:  Screen.width
     height: Screen.height
 
-    // Background with blur
-    Image {
-        id: backgroundImage
-        anchors.fill: parent
-        source: config.background || "/usr/share/backgrounds/hunter-os-dark.png"
-        fillMode: Image.PreserveAspectCrop
-        smooth: true
+    property int sessionIndex: sessionCombo.currentIndex
 
-        // Dark overlay for readability
-        Rectangle {
-            anchors.fill: parent
-            color: "#000000"
-            opacity: 0.3
-        }
+    // ─── Pure black background ─────────────────────────────
+    Rectangle {
+        anchors.fill: parent
+        color: "#000000"
     }
 
-    // Clock at top
-    ColumnLayout {
-        anchors.top: parent.top
-        anchors.topMargin: 60
+    // Wallpaper (sits behind everything, darkened)
+    Image {
+        id: wallpaper
+        anchors.fill: parent
+        source: "/usr/share/backgrounds/hunter-os-dark.png"
+        fillMode: Image.PreserveAspectCrop
+        asynchronous: true
+        opacity: 0.3
+        visible: status === Image.Ready
+    }
+
+    // ─── Clock (top center) ───────────────────────────────
+    Column {
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 4
+        anchors.top: parent.top
+        anchors.topMargin: 48
+        spacing: 6
 
         Text {
-            Layout.alignment: Qt.AlignHCenter
-            text: Qt.formatTime(new Date(), "hh:mm")
+            id: clockText
+            anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 72
             font.weight: Font.Light
-            color: "white"
-            renderType: Text.NativeRendering
+            font.letterSpacing: -1
+            color: "#FFFFFF"
+            text: Qt.formatDateTime(new Date(), "hh:mm")
         }
 
         Text {
-            Layout.alignment: Qt.AlignHCenter
-            text: Qt.formatDate(new Date(), "dddd, MMMM d")
-            font.pixelSize: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 15
             font.weight: Font.Normal
-            color: "#cccccc"
-            renderType: Text.NativeRendering
+            color: "#6E6E80"
+            text: Qt.formatDateTime(new Date(), "dddd, MMMM d")
+            font.letterSpacing: 0.3
+        }
+
+        Timer {
+            interval: 1000; running: true; repeat: true
+            onTriggered: clockText.text = Qt.formatDateTime(new Date(), "hh:mm")
         }
     }
 
-    // Timer to update clock
-    Timer {
-        interval: 30000
-        running: true
-        repeat: true
-        onTriggered: { /* Clock auto-updates via binding */ }
-    }
-
-    // Login box - centered
-    ColumnLayout {
+    // ─── Login Card (centered) ────────────────────────────
+    Column {
         anchors.centerIn: parent
-        spacing: 16
+        spacing: 0
         width: 320
 
-        // User avatar circle
-        Rectangle {
-            Layout.alignment: Qt.AlignHCenter
-            width: 96
-            height: 96
-            radius: 48
-            color: "#4a90d9"
-            border.color: "#ffffff"
-            border.width: 2
+        // Brand mark
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "HUNTER"
+            font.pixelSize: 13
+            font.weight: Font.Medium
+            font.letterSpacing: 4
+            color: "#3A3A48"
+            bottomPadding: 40
+        }
 
+        // Avatar circle
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 96; height: 96
+            radius: 48
+            color: "#111116"
+            border.color: "#1E1E24"
+            border.width: 2
+            bottomPadding: 0
+
+            // Shadow
+            layer.enabled: true
+            layer.effect: Item {}
+
+            // User icon
             Text {
                 anchors.centerIn: parent
-                text: "🛡️"
-                font.pixelSize: 42
+                text: usernameField.text.length > 0 ? usernameField.text.charAt(0).toUpperCase() : "H"
+                font.pixelSize: 32
+                font.weight: Font.Light
+                color: "#3A3A48"
             }
         }
 
-        // Username display
+        Item { width: 1; height: 16 }
+
+        // Username
         Text {
-            Layout.alignment: Qt.AlignHCenter
-            text: userModel.lastUser || "Hunter"
-            font.pixelSize: 22
-            font.weight: Font.Medium
-            color: "white"
-            renderType: Text.NativeRendering
+            id: usernameDisplay
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: userModel.lastUser || "hunter"
+            font.pixelSize: 18
+            font.weight: Font.Normal
+            color: "#FFFFFF"
+            bottomPadding: 28
         }
 
-        // Password field
-        TextField {
-            id: passwordField
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 280
-            Layout.preferredHeight: 40
-            echoMode: TextInput.Password
-            placeholderText: "Enter Password"
-            horizontalAlignment: TextInput.AlignHCenter
+        // Password field + submit button
+        Rectangle {
+            width: parent.width; height: 48
+            color: "#111116"
+            radius: 10
+            border.color: passwordField.activeFocus ? "#00BFFF" : "#1E1E24"
+            border.width: 1
 
-            background: Rectangle {
-                radius: 20
-                color: "#40ffffff"
-                border.color: passwordField.activeFocus ? "#4a90d9" : "#60ffffff"
-                border.width: 1
+            Behavior on border.color { ColorAnimation { duration: 150 } }
+
+            // Focus glow
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: -3
+                radius: 13
+                color: "transparent"
+                border.color: passwordField.activeFocus ? "#00BFFF" : "transparent"
+                border.width: 3
+                opacity: 0.08
+                Behavior on border.color { ColorAnimation { duration: 150 } }
             }
 
-            color: "white"
-            font.pixelSize: 14
-
-            Keys.onReturnPressed: {
-                sddm.login(userModel.lastUser, passwordField.text, sessionModel.lastIndex)
+            TextField {
+                id: passwordField
+                anchors.fill: parent
+                anchors.rightMargin: 48
+                echoMode: TextInput.Password
+                placeholderText: "Password"
+                color: "#FFFFFF"
+                placeholderTextColor: "#3A3A48"
+                font.pixelSize: 14
+                font.weight: Font.Normal
+                leftPadding: 16
+                background: Item {}
+                Keys.onReturnPressed: doLogin()
             }
 
-            Component.onCompleted: forceActiveFocus()
+            // Submit arrow button
+            Rectangle {
+                anchors.right: parent.right
+                anchors.rightMargin: 4
+                anchors.verticalCenter: parent.verticalCenter
+                width: 40; height: 40
+                radius: 8
+                color: submitMouse.pressed ? "#0090CC" : "#00BFFF"
+                Behavior on color { ColorAnimation { duration: 100 } }
+
+                // Arrow icon →
+                Text {
+                    anchors.centerIn: parent
+                    text: "→"
+                    font.pixelSize: 16
+                    font.weight: Font.Bold
+                    color: "#000000"
+                }
+
+                MouseArea {
+                    id: submitMouse
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: doLogin()
+                }
+            }
         }
 
-        // Error message
+        Item { width: 1; height: 6 }
+
+        // Status text
         Text {
-            id: errorMessage
-            Layout.alignment: Qt.AlignHCenter
+            id: statusText
+            anchors.horizontalCenter: parent.horizontalCenter
             text: ""
-            color: "#ff6b6b"
             font.pixelSize: 12
-            visible: text !== ""
+            color: "#6E6E80"
+            height: 18
         }
 
-        // Session selector (small, at bottom)
+        Item { width: 1; height: 16 }
+
+        // Hidden username field (for SDDM)
+        TextField {
+            id: usernameField
+            visible: false
+            text: userModel.lastUser || "hunter"
+        }
+
+        // Session selector
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: sessionCombo.currentText + " ▾"
+            font.pixelSize: 12
+            color: "#3A3A48"
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: sessionCombo.popup.open()
+            }
+        }
+
         ComboBox {
-            id: sessionSelector
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 200
+            id: sessionCombo
+            visible: false
             model: sessionModel
-            currentIndex: sessionModel.lastIndex
             textRole: "name"
-
-            background: Rectangle {
-                radius: 12
-                color: "#20ffffff"
-                border.color: "#40ffffff"
-            }
-
-            contentItem: Text {
-                text: sessionSelector.displayText
-                color: "#aaaaaa"
-                font.pixelSize: 11
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
         }
     }
 
-    // Power buttons - bottom right
+    // ─── Power Buttons (bottom-right) ─────────────────────
     Row {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.margins: 24
-        spacing: 16
+        anchors.margins: 28
+        spacing: 8
 
-        ImageButton {
-            id: btnReboot
-            source: "reboot.svg"
-            width: 32
-            height: 32
-            onClicked: sddm.reboot()
-
-            Text {
-                anchors.top: parent.bottom
-                anchors.topMargin: 4
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "Restart"
-                color: "#aaaaaa"
-                font.pixelSize: 10
-            }
-        }
-
-        ImageButton {
-            id: btnPoweroff
-            source: "shutdown.svg"
-            width: 32
-            height: 32
-            onClicked: sddm.powerOff()
-
-            Text {
-                anchors.top: parent.bottom
-                anchors.topMargin: 4
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "Shut Down"
-                color: "#aaaaaa"
-                font.pixelSize: 10
-            }
-        }
+        PowerButton { iconText: "⏻"; tooltip: "Shutdown"; onClicked: sddm.powerOff() }
+        PowerButton { iconText: "↺"; tooltip: "Restart";  onClicked: sddm.reboot()   }
     }
 
-    // OS branding - bottom left
-    Text {
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.margins: 24
-        text: "Hunter OS"
-        color: "#60ffffff"
-        font.pixelSize: 12
-        font.weight: Font.Medium
+    // ─── Login Logic ──────────────────────────────────────
+    function doLogin() {
+        statusText.color = "#6E6E80"
+        statusText.text = "Authenticating..."
+        sddm.login(usernameField.text, passwordField.text, sessionIndex)
     }
 
-    // Handle login failure
     Connections {
         target: sddm
         function onLoginFailed() {
-            errorMessage.text = "Incorrect password. Please try again."
-            passwordField.text = ""
+            passwordField.clear()
             passwordField.forceActiveFocus()
+            statusText.text = "Incorrect password"
+            statusText.color = "#FF3B5C"
         }
-        function onLoginSucceeded() {
-            errorMessage.text = ""
+    }
+
+    // Focus password field on load
+    Component.onCompleted: passwordField.forceActiveFocus()
+
+    // ─── PowerButton Component ────────────────────────────
+    component PowerButton: Rectangle {
+        property string iconText: ""
+        property string tooltip: ""
+        signal clicked()
+
+        width: 36; height: 36; radius: 18
+        color: pwMouse.containsMouse ? "#111116" : "transparent"
+        border.color: pwMouse.containsMouse ? "#3A3A48" : "#1E1E24"
+        border.width: 1
+        Behavior on color { ColorAnimation { duration: 150 } }
+        Behavior on border.color { ColorAnimation { duration: 150 } }
+
+        Text {
+            anchors.centerIn: parent
+            text: parent.iconText
+            color: pwMouse.containsMouse ? "#6E6E80" : "#3A3A48"
+            font.pixelSize: 14
+            Behavior on color { ColorAnimation { duration: 150 } }
+        }
+
+        ToolTip.visible: pwMouse.containsMouse
+        ToolTip.text: parent.tooltip
+
+        MouseArea {
+            id: pwMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: parent.clicked()
         }
     }
 }

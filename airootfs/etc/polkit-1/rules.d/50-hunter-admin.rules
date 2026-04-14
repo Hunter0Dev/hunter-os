@@ -1,0 +1,28 @@
+// Hunter OS - Polkit authorization rules
+// Only wheel group members can perform admin actions (like Windows UAC / macOS admin prompt)
+
+polkit.addAdminRule(function(action, subject) {
+    return ["unix-group:wheel"];
+});
+
+// Require password for package management
+polkit.addRule(function(action, subject) {
+    if (action.id.indexOf("org.freedesktop.packagekit") === 0) {
+        if (subject.isInGroup("wheel")) {
+            return polkit.Result.AUTH_ADMIN_KEEP;
+        }
+        return polkit.Result.NO;
+    }
+});
+
+// Require password for system-wide changes
+polkit.addRule(function(action, subject) {
+    if (action.id.indexOf("org.freedesktop.systemd1.manage-units") === 0 ||
+        action.id.indexOf("org.freedesktop.login1.power-off") === 0 ||
+        action.id.indexOf("org.freedesktop.login1.reboot") === 0) {
+        if (subject.isInGroup("wheel")) {
+            return polkit.Result.YES;
+        }
+        return polkit.Result.AUTH_ADMIN;
+    }
+});

@@ -3,7 +3,7 @@ componentName:  hunter
 welcomeStyleCalamares:   true
 welcomeExpandingLogo:   true
 windowExpanding:    normal
-windowSize: 800px,520px
+windowSize: 900px,580px
 windowPlacement: center
 
 strings:
@@ -14,15 +14,23 @@ strings:
     versionedName:       HUNTER OS 1.0 (Aegis)
     shortVersionedName:  HUNTER 1.0
     bootloaderEntryName: HUNTER
+    productUrl:          https://hunter-os.org
+    supportUrl:          https://hunter-os.org/support
+    knownIssuesUrl:      https://hunter-os.org/issues
+    releaseNotesUrl:     https://hunter-os.org/releases
 
 images:
-    productLogo:         "/usr/share/pixmaps/hunter-logo.png"
-    productIcon:         "/usr/share/pixmaps/hunter-logo.png"
-    productWelcome:      "/usr/share/backgrounds/default.png"
+    productLogo:         "/usr/share/pixmaps/hunter-os.png"
+    productIcon:         "/usr/share/pixmaps/hunter-os.png"
+    productWelcome:      "/usr/share/backgrounds/hunter-os-dark.png"
 
-slideshow:               []
+slideshow:               "slideshow.qml"
+slideshowAPI:            2
 
 style:
-   sidebarBackground:    "#1e1e2e"
-   sidebarText:          "#ffffff"
-   sidebarTextSelect:    "#33ccff"
+   sidebarBackground:    "#111116"
+   sidebarText:          "#6E6E80"
+   sidebarTextSelect:    "#00BFFF"
+   sidebarTextHighlight: "#FFFFFF"
+
+stylesheet: "stylesheet.qss"

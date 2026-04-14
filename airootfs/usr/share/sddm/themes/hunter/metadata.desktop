@@ -1,10 +1,13 @@
 [SddmGreeterTheme]
 Name=Hunter OS
-Description=Hunter OS Login Screen - macOS Sonoma-inspired
+Description=Hunter OS SDDM Login Theme — macOS-inspired dark glassmorphism login screen
 Type=sddm-theme
 Version=1.0
+Author=Hunter Systems
 Website=https://hunter-os.org
-Screenshot=preview.png
+Screenshot=
 MainScript=Main.qml
-ConfigFile=theme.conf
-TranslationsDirectory=translations
+ConfigFile=
+TranslationsDirectory=
+Theme-Id=hunter
+Theme-API=2.0

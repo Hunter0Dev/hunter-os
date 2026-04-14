@@ -17,7 +17,9 @@ destemail = root@localhost
 sender = fail2ban@hunter-os
 
 # Action to take when threshold is reached
-action = %(action_mwl)s
+# action_mwl sends email (requires sendmail/postfix — not installed by default)
+# Using action_ which just bans the IP without sending mail
+action = %(action_)s
 
 # Ignore local network
 ignoreip = 127.0.0.1/8 ::1

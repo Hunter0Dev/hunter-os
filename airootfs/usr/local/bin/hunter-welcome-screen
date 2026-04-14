@@ -4,8 +4,8 @@
 
 set -e
 
-# Check if this is first boot (only hunter user exists)
-USER_COUNT=$(ls /home 2>/dev/null | grep -v hunter | wc -l)
+# Check if this is first boot (only hunter user and Shared exist)
+USER_COUNT=$(ls /home 2>/dev/null | grep -v -E '^(hunter|Shared)$' | wc -l)
 
 if [ "$USER_COUNT" -eq 0 ]; then
     # First boot - show welcome screen
@@ -19,17 +19,12 @@ This is your first time booting Hunter OS.\n\n\
 Click OK to create your account now." \
         --icon-name=dialog-information
 
-    # Launch account creation
-    /usr/local/bin/hunter-setup-user
-
-    # If account creation succeeded, show success message
-    if [ $? -eq 0 ]; then
+    # Launch account creation — capture success/failure correctly
+    if /usr/local/bin/hunter-setup-user; then
         zenity --info \
             --title="Account Created" \
             --width=400 \
-            --text="<b>Your account has been created successfully!</b>\n\n\
-The login screen will now appear.\n\
-Select your username and enter your password to login." \
+            --text="<b>Your account has been created successfully!</b>\n\nThe login screen will now appear.\nSelect your username and enter your password to login." \
             --icon-name=dialog-information
     fi
 fi
